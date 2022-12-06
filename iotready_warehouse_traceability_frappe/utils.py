@@ -680,6 +680,15 @@ def crate_splitting(crate: dict, activity: str):
     }
 
 
+def new_crate():
+    crate = frappe.new_doc("Crate")
+    crate.id = frappe.generate_hash()[-10:]
+    crate.is_available_for_procurement = True
+    crate.save()
+    frappe.db.commit()
+    return {"success": True, "message": crate.name}
+
+
 allowed_activities = {
     "Procurement": procurement,
     "Transfer Out": transfer_out,
