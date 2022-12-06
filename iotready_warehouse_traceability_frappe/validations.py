@@ -115,8 +115,8 @@ def validate_procurement_quantity(quantity, item_code, is_final=False):
         expected_quantity = item.standard_crate_quantity * (
             1 + moisture_loss_percent / 100
         )
-        lower_limit = expected_quantity - item.lower_tolerance
-        upper_limit = expected_quantity + item.upper_tolerance
+        lower_limit = expected_quantity - item.crate_lower_tolerance
+        upper_limit = expected_quantity + item.crate_upper_tolerance
     print(lower_limit, upper_limit)
     if quantity < lower_limit and not is_final:
         raise Exception("Quantity Under Limit")

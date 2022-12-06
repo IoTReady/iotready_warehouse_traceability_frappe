@@ -3,6 +3,7 @@ import frappe
 import requests
 from datetime import datetime, timedelta
 from iotready_warehouse_traceability_frappe.validations import *
+from iotready_godesi.api import generate_label
 
 
 def normal_round(num, ndigits=0):
@@ -228,8 +229,8 @@ def get_crate_details(crate_id: str):
             "uom_quantity": item.uom_quantity,
             "standard_crate_quantity": item.standard_crate_quantity,
             "moisture_loss": item.moisture_loss,
-            "lower_tolerance": item.lower_tolerance,
-            "upper_tolerance": item.upper_tolerance,
+            "lower_tolerance": item.crate_lower_tolerance,
+            "upper_tolerance": item.crate_upper_tolerance,
         },
         "batch_quantity": crate_doc.last_known_weight,
         "grn_quantity": crate_doc.last_known_grn_quantity,
@@ -401,8 +402,8 @@ def get_configuration():
             "uom_quantity",
             "standard_crate_quantity",
             "moisture_loss",
-            "lower_tolerance",
-            "upper_tolerance",
+            "crate_lower_tolerance",
+            "crate_upper_tolerance",
         ],
         filters={"disabled": 0, "name": ["in", item_refs]},
     )
@@ -476,7 +477,13 @@ def procurement(crate: dict, activity: str):
         crate_weight=crate_weight,
         source_warehouse=source_warehouse,
     )
-    return {"success": True, "message": "Crate Added"}
+    label = generate_label(
+        warehouse_id=source_warehouse,
+        crate_id=crate_id,
+        item_code=item_code,
+        quantity=quantity,
+    )
+    return {"success": True, "message": "Crate Added", "label": label}
 
 
 def transfer_out(crate: dict, activity: str):
