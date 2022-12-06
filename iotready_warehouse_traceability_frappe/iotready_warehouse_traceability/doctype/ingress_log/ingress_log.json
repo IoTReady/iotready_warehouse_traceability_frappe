@@ -1,0 +1,99 @@
+{
+  "actions": [],
+  "creation": "2022-12-03 15:59:20.089577",
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": ["activity", "crate", "result"],
+  "fields": [
+    {
+      "fieldname": "activity",
+      "fieldtype": "Data",
+      "in_list_view": 1,
+      "in_preview": 1,
+      "in_standard_filter": 1,
+      "label": "Activity"
+    },
+    {
+      "fieldname": "crate",
+      "fieldtype": "Long Text",
+      "in_list_view": 1,
+      "in_preview": 1,
+      "label": "Crate"
+    },
+    {
+      "fieldname": "result",
+      "fieldtype": "Long Text",
+      "label": "Result"
+    }
+  ],
+  "links": [],
+  "modified": "2022-12-03 18:57:08.122864",
+  "modified_by": "Administrator",
+  "module": "IoTReady Warehouse Traceability",
+  "name": "Ingress Log",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "System Manager",
+      "share": 1,
+      "write": 1
+    },
+    {
+      "create": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "Procurement User",
+      "share": 1,
+      "write": 1
+    },
+    {
+      "create": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "Procurement Manager",
+      "share": 1,
+      "write": 1
+    },
+    {
+      "create": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "Central Manager",
+      "share": 1,
+      "write": 1
+    },
+    {
+      "create": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "Fleet Manager",
+      "share": 1,
+      "write": 1
+    }
+  ],
+  "show_preview_popup": 1,
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "states": [],
+  "title_field": "activity"
+}

@@ -1,0 +1,281 @@
+{
+ "actions": [],
+ "allow_copy": 1,
+ "creation": "2022-11-29 16:34:10.829921",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "crate_id",
+  "capture_mode",
+  "status",
+  "column_break_2",
+  "activity",
+  "source_warehouse",
+  "section_break_4",
+  "supplier_id",
+  "supplier_name",
+  "item_code",
+  "item_name",
+  "target_warehouse",
+  "vehicle",
+  "material_request",
+  "wms_acknowledgement_id",
+  "reference_id",
+  "column_break_11",
+  "stock_uom",
+  "grn_quantity",
+  "crate_weight",
+  "moisture_loss",
+  "actual_loss",
+  "excess_weight"
+ ],
+ "fields": [
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "activity",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Activity",
+   "options": "Crate Activity Type",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_4",
+   "fieldtype": "Section Break",
+   "label": "Activity Details",
+   "read_only": 1
+  },
+  {
+   "fieldname": "grn_quantity",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "label": "GRN Quantity",
+   "non_negative": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "crate_weight",
+   "fieldtype": "Float",
+   "label": "Crate Weight",
+   "non_negative": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "moisture_loss",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "label": "Moisture Loss",
+   "read_only": 1
+  },
+  {
+   "fieldname": "actual_loss",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "label": "Actual Loss",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_11",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "source_warehouse",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Source Warehouse",
+   "options": "Warehouse",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "target_warehouse",
+   "fieldtype": "Link",
+   "label": "Target Warehouse",
+   "options": "Warehouse",
+   "read_only": 1
+  },
+  {
+   "fieldname": "vehicle",
+   "fieldtype": "Data",
+   "label": "Vehicle",
+   "read_only": 1
+  },
+  {
+   "fieldname": "material_request",
+   "fieldtype": "Data",
+   "label": "Material Request",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "item_code.item_name",
+   "fieldname": "item_name",
+   "fieldtype": "Data",
+   "label": "Item Name",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "supplier_id.supplier_name",
+   "fieldname": "supplier_name",
+   "fieldtype": "Data",
+   "label": "Supplier Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "item_code",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Item Code",
+   "options": "Item",
+   "read_only": 1
+  },
+  {
+   "fieldname": "crate_id",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Crate ID",
+   "options": "Crate",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "supplier_id",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Supplier ID",
+   "options": "Supplier",
+   "read_only": 1
+  },
+  {
+   "fieldname": "excess_weight",
+   "fieldtype": "Float",
+   "label": "Excess Weight",
+   "read_only": 1
+  },
+  {
+   "fieldname": "capture_mode",
+   "fieldtype": "Select",
+   "label": "Capture Mode",
+   "options": "Scan\nWeight",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fetch_from": "item_code.stock_uom",
+   "fieldname": "stock_uom",
+   "fieldtype": "Link",
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Stock UOM",
+   "options": "UOM",
+   "read_only": 1
+  },
+  {
+   "fieldname": "reference_id",
+   "fieldtype": "Data",
+   "label": "Reference ID",
+   "read_only": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Draft\nCompleted",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "wms_acknowledgement_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "WMS Acknowledgement ID",
+   "read_only": 1
+  }
+ ],
+ "hide_toolbar": 1,
+ "links": [],
+ "modified": "2022-12-05 18:32:36.010015",
+ "modified_by": "Administrator",
+ "module": "IoTReady Warehouse Traceability",
+ "name": "Crate Activity",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Procurement User",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Procurement Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Central Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "search_fields": "activity, source_warehouse, crate_id",
+ "show_preview_popup": 1,
+ "show_title_field_in_link": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "crate_id"
+}

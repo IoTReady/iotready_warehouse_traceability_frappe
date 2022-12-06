@@ -1,0 +1,254 @@
+{
+  "actions": [],
+  "allow_import": 1,
+  "allow_rename": 1,
+  "autoname": "field:id",
+  "creation": "2022-11-29 15:43:19.165601",
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "id",
+    "is_available_for_procurement",
+    "available_at",
+    "section_break_4",
+    "item_code",
+    "item_name",
+    "supplier_id",
+    "supplier_name",
+    "stock_uom",
+    "procured_grn_quantity",
+    "last_known_grn_quantity",
+    "last_known_weight",
+    "column_break_4",
+    "last_activity_type",
+    "last_activity",
+    "last_activity_timestamp",
+    "last_known_warehouse",
+    "purchase_receipt",
+    "procurement_timestamp",
+    "procurement_warehouse_id",
+    "procurement_warehouse_name",
+    "eretail_grn",
+    "eretail_transfer_out_number",
+    "activities_section",
+    "last_procurement"
+  ],
+  "fields": [
+    {
+      "fieldname": "id",
+      "fieldtype": "Data",
+      "in_list_view": 1,
+      "label": "ID",
+      "reqd": 1,
+      "unique": 1
+    },
+    {
+      "default": "0",
+      "fieldname": "is_available_for_procurement",
+      "fieldtype": "Check",
+      "in_list_view": 1,
+      "in_preview": 1,
+      "in_standard_filter": 1,
+      "label": "Is Available For Procurement",
+      "read_only": 1
+    },
+    {
+      "fieldname": "available_at",
+      "fieldtype": "Datetime",
+      "in_list_view": 1,
+      "in_preview": 1,
+      "label": "Available At",
+      "read_only": 1
+    },
+    {
+      "fieldname": "column_break_4",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "eretail_grn",
+      "fieldtype": "Data",
+      "is_virtual": 1,
+      "label": "ERetail GRN",
+      "read_only": 1
+    },
+    {
+      "fieldname": "eretail_transfer_out_number",
+      "fieldtype": "Data",
+      "label": "ERetail Transfer Out Number",
+      "read_only": 1
+    },
+    {
+      "fieldname": "purchase_receipt",
+      "fieldtype": "Data",
+      "is_virtual": 1,
+      "label": "Purchase Receipt",
+      "read_only": 1
+    },
+    {
+      "fieldname": "procured_grn_quantity",
+      "fieldtype": "Float",
+      "is_virtual": 1,
+      "label": "Procured GRN Quantity"
+    },
+    {
+      "fieldname": "last_known_grn_quantity",
+      "fieldtype": "Float",
+      "is_virtual": 1,
+      "label": "Last Known GRN Quantity"
+    },
+    {
+      "fieldname": "last_known_weight",
+      "fieldtype": "Float",
+      "is_virtual": 1,
+      "label": "Last Known Weight"
+    },
+    {
+      "fieldname": "last_known_warehouse",
+      "fieldtype": "Data",
+      "is_virtual": 1,
+      "label": "Last Known Warehouse"
+    },
+    {
+      "fieldname": "last_procurement",
+      "fieldtype": "Data",
+      "is_virtual": 1,
+      "label": "Last Procurement"
+    },
+    {
+      "fieldname": "last_activity",
+      "fieldtype": "Data",
+      "is_virtual": 1,
+      "label": "Last Activity Document"
+    },
+    {
+      "depends_on": "eval: doc.last_procurement",
+      "fieldname": "section_break_4",
+      "fieldtype": "Section Break"
+    },
+    {
+      "fieldname": "item_code",
+      "fieldtype": "Data",
+      "is_virtual": 1,
+      "label": "Item Code"
+    },
+    {
+      "fieldname": "supplier_id",
+      "fieldtype": "Data",
+      "is_virtual": 1,
+      "label": "Supplier ID"
+    },
+    {
+      "fieldname": "stock_uom",
+      "fieldtype": "Data",
+      "is_virtual": 1,
+      "label": "Stock UOM"
+    },
+    {
+      "fieldname": "activities_section",
+      "fieldtype": "Section Break",
+      "hidden": 1,
+      "label": "Activities"
+    },
+    {
+      "fieldname": "item_name",
+      "fieldtype": "Data",
+      "is_virtual": 1,
+      "label": "Item Name"
+    },
+    {
+      "fieldname": "supplier_name",
+      "fieldtype": "Data",
+      "is_virtual": 1,
+      "label": "Supplier Name"
+    },
+    {
+      "fieldname": "procurement_warehouse_id",
+      "fieldtype": "Data",
+      "is_virtual": 1,
+      "label": "Procurement Warehouse ID"
+    },
+    {
+      "fieldname": "procurement_warehouse_name",
+      "fieldtype": "Data",
+      "is_virtual": 1,
+      "label": "Procurement Warehouse Name"
+    },
+    {
+      "fieldname": "procurement_timestamp",
+      "fieldtype": "Datetime",
+      "is_virtual": 1,
+      "label": "Procurement Timestamp"
+    },
+    {
+      "fieldname": "last_activity_type",
+      "fieldtype": "Data",
+      "is_virtual": 1,
+      "label": "Last Activity Type"
+    },
+    {
+      "fieldname": "last_activity_timestamp",
+      "fieldtype": "Datetime",
+      "is_virtual": 1,
+      "label": "Last Activity Timestamp"
+    }
+  ],
+  "links": [],
+  "modified": "2022-12-04 23:45:44.778809",
+  "modified_by": "Administrator",
+  "module": "IoTReady Warehouse Traceability",
+  "name": "Crate",
+  "naming_rule": "By fieldname",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "System Manager",
+      "share": 1,
+      "write": 1
+    },
+    {
+      "create": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "Procurement User",
+      "share": 1,
+      "write": 1
+    },
+    {
+      "create": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "Procurement Manager",
+      "share": 1,
+      "write": 1
+    },
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "Central Manager",
+      "share": 1,
+      "write": 1
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "states": []
+}

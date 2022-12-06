@@ -1,0 +1,43 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2022-12-05 16:14:08.997322",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "enable_wms_integration"
+ ],
+ "fields": [
+  {
+   "default": "0",
+   "fieldname": "enable_wms_integration",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Enable WMS Integration",
+   "reqd": 1
+  }
+ ],
+ "issingle": 1,
+ "links": [],
+ "modified": "2022-12-05 16:14:13.600140",
+ "modified_by": "Administrator",
+ "module": "IoTReady Warehouse Traceability",
+ "name": "WMS Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -1,0 +1,271 @@
+{
+ "actions": [],
+ "allow_copy": 1,
+ "allow_rename": 1,
+ "autoname": "format:SM-{source_warehouse}-{######}",
+ "creation": "2022-11-30 16:52:35.849155",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "activity",
+  "source_warehouse",
+  "source_warehouse_name",
+  "target_warehouse",
+  "target_warehouse_name",
+  "vehicle",
+  "supplier_id",
+  "supplier_name",
+  "date",
+  "status",
+  "column_break_6",
+  "number_of_crates",
+  "reference_id",
+  "last_wms_sync_attempt",
+  "wms_acknowledgement_id",
+  "wms_sync_message",
+  "wms_sync_status_code",
+  "summary_section",
+  "sku_table",
+  "section_break_13",
+  "crate_table",
+  "data_section",
+  "items",
+  "crates"
+ ],
+ "fields": [
+  {
+   "fieldname": "activity",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Activity",
+   "options": "Crate Activity Type",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "source_warehouse",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Source Warehouse",
+   "options": "Warehouse",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "source_warehouse_name",
+   "fieldtype": "Data",
+   "label": "Source Warehouse Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "target_warehouse",
+   "fieldtype": "Link",
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Target Warehouse",
+   "options": "Warehouse",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fetch_from": "target_warehouse.title",
+   "fieldname": "target_warehouse_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "label": "Target Warehouse Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "label": "Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Draft\nCompleted",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_6",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "number_of_crates",
+   "fieldtype": "Int",
+   "is_virtual": 1,
+   "label": "Number Of Crates",
+   "read_only": 1
+  },
+  {
+   "fieldname": "summary_section",
+   "fieldtype": "Section Break",
+   "label": "SKUs"
+  },
+  {
+   "fieldname": "sku_table",
+   "fieldtype": "HTML",
+   "label": "SKU Table"
+  },
+  {
+   "fieldname": "section_break_13",
+   "fieldtype": "Section Break",
+   "label": "Crates"
+  },
+  {
+   "fieldname": "crate_table",
+   "fieldtype": "HTML",
+   "label": "Crate Table"
+  },
+  {
+   "fieldname": "data_section",
+   "fieldtype": "Section Break",
+   "hidden": 1,
+   "label": "Data"
+  },
+  {
+   "fieldname": "items",
+   "fieldtype": "JSON",
+   "hidden": 1,
+   "is_virtual": 1,
+   "label": "Items"
+  },
+  {
+   "fieldname": "crates",
+   "fieldtype": "JSON",
+   "hidden": 1,
+   "is_virtual": 1,
+   "label": "Crates"
+  },
+  {
+   "fieldname": "reference_id",
+   "fieldtype": "Data",
+   "label": "Reference ID",
+   "read_only": 1
+  },
+  {
+   "fieldname": "vehicle",
+   "fieldtype": "Link",
+   "label": "Vehicle",
+   "options": "Vehicle",
+   "read_only": 1
+  },
+  {
+   "fieldname": "supplier_id",
+   "fieldtype": "Link",
+   "label": "Supplier ID",
+   "options": "Supplier",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "supplier_id.supplier_name",
+   "fieldname": "supplier_name",
+   "fieldtype": "Data",
+   "label": "Supplier Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "last_wms_sync_attempt",
+   "fieldtype": "Datetime",
+   "label": "Last WMS Sync Attempt",
+   "read_only": 1
+  },
+  {
+   "fieldname": "wms_acknowledgement_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "label": "WMS Acknowledgement ID",
+   "read_only": 1
+  },
+  {
+   "fieldname": "wms_sync_message",
+   "fieldtype": "Data",
+   "label": "WMS Sync Message",
+   "read_only": 1
+  },
+  {
+   "fieldname": "wms_sync_status_code",
+   "fieldtype": "Data",
+   "label": "WMS Sync Status Code",
+   "read_only": 1
+  }
+ ],
+ "hide_toolbar": 1,
+ "in_create": 1,
+ "links": [],
+ "modified": "2022-12-05 18:32:36.463188",
+ "modified_by": "Administrator",
+ "module": "IoTReady Warehouse Traceability",
+ "name": "Activity Summary",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Procurement User",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Procurement Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Central Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "search_fields": "source_warehouse, target_warehouse",
+ "show_preview_popup": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "activity"
+}
