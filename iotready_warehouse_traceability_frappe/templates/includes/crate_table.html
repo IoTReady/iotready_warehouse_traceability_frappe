@@ -18,14 +18,14 @@
     <td>{{row['crate_id']}}</td>
     <td>{{row['item_code']}}</td>
     <td>{{row['item_name']}}</td>
-    {% if row['stock_uom'] | lower == 'nos' %}
+    {% if row['stock_uom'] | lower in ["nos", "pcs"] %}
     <td style="text-align: right">{{row['grn_quantity'] | int }} Pcs</td>
     {% else %}
     <td style="text-align: right">
       {{row['grn_quantity'] }} Kg
     </td>
     {% endif %}
-    {% if activity == "Procurement" and row['stock_uom'] | lower != 'nos' %}
+    {% if activity == "Procurement" and row['stock_uom'] | lower not in ["nos", "pcs"] %}
     <td style="text-align: right">{{(row['crate_weight'] - row['grn_quantity']) | round(3) }} Kg</td>
     {% else %}
     <td style="text-align: right">{{row['moisture_loss'] }} Kg</td>

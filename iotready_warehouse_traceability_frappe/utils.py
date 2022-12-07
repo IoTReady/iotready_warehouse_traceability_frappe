@@ -35,7 +35,7 @@ def get_display_quantity_in_uom(qty, uom):
     elif uom.lower() == "kg":
         qty = normal_round(qty, 2)
         display_qty = f"{qty} Kg"
-    elif uom.lower() == "nos":
+    elif uom.lower() in ["nos", "pcs"]:
         display_qty = f"{qty} Pcs"
     return display_qty
 
@@ -49,7 +49,7 @@ def get_moisture_loss_percent(item_code):
     Given an SKU, returns the moisture loss percent.
     """
     stock_uom = get_item_uom(item_code)
-    if stock_uom == "Nos":
+    if stock_uom.lower() in ["nos", "pcs"]:
         moisture_loss_percent = 0
     else:
         moisture_loss_percent = frappe.db.get_value("Item", item_code, "moisture_loss")
@@ -407,6 +407,9 @@ def get_configuration():
         ],
         filters={"disabled": 0, "name": ["in", item_refs]},
     )
+    for item in items:
+        if item["stock_uom"].lower() in ["nos", "pcs"]:
+            item["stock_uom"] = "Nos"
     suppliers = [
         {
             "supplier_id": row.supplier,
@@ -643,7 +646,7 @@ def crate_splitting(crate: dict, activity: str):
     supplier_id = parent_crate.supplier_id
     child_weight = crate["weight"]
     child_grn_quantity = crate["quantity"]
-    if stock_uom != "Nos":
+    if stock_uom.lower() in ["nos", "pcs"]:
         child_grn_quantity = child_weight
     assert parent_grn_quantity >= child_grn_quantity, "Insufficient Quantity Remaining."
     remaining_parent_quantity = parent_grn_quantity - child_grn_quantity

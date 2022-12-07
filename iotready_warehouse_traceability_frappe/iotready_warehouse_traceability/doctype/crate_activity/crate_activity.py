@@ -70,7 +70,7 @@ class CrateActivity(Document):
             return
         if not self.source_warehouse and self.activity == "Transfer In":
             self.source_warehouse = crate.last_known_warehouse
-        if self.crate_weight and crate.stock_uom.lower() != "nos":
+        if self.crate_weight and crate.stock_uom.lower() not in ["nos", "pcs"]:
             # Do a cycle count here
             # convert to kg first
             # self.crate_weight = self.crate_weight / 1000
