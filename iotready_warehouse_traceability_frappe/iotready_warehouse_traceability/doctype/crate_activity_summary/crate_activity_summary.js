@@ -1,6 +1,3 @@
-// Copyright (c) 2022, IoTReady and contributors
-// For license information, please see license.txt
-
 const submit_summary = (frm) => {
   frappe.db
     .get_value("WMS Settings", "WMS Settings", "enable_wms_integration")
@@ -52,7 +49,7 @@ const show_refresh_button = (frm) => {
   });
 };
 
-frappe.ui.form.on("Activity Summary", {
+frappe.ui.form.on("Crate Activity Summary", {
   refresh: function (frm) {
     frm.disable_save();
     if (!frm.is_new() && !(frm.doc.status == "Completed")) {

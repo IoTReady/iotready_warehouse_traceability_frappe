@@ -95,11 +95,6 @@ def validate_crate_at_parent_warehouse(crate_id, target_warehouse):
     ), f"Crate {crate_id} not at {parent_warehouse}"
 
 
-def validate_grn_completed(crate_id):
-    crate = frappe.get_doc("Crate", crate_id)
-    assert crate.eretail_grn, f"GRN not completed for crate {crate_id}"
-
-
 def validate_procurement_quantity(quantity, item_code, is_final=False):
     item = frappe.get_doc("Item", item_code)
     if item.stock_uom == "Nos":

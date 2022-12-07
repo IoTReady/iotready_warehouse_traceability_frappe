@@ -281,6 +281,7 @@ def create_procurement_activity(
     crate_weight,
     source_warehouse,
 ):
+    print("create_procurement_activity", crate_id)
     delete_draft_crate_activities(crate_id)
     doc = frappe.new_doc("Crate Activity")
     doc.crate_id = crate_id
@@ -291,6 +292,7 @@ def create_procurement_activity(
     doc.crate_weight = crate_weight
     # doc.moisture_loss = moisture_loss
     doc.source_warehouse = source_warehouse
+    doc.target_warehouse = source_warehouse
     doc.save()
     frappe.db.commit()
 
@@ -358,7 +360,6 @@ def create_crate_splitting_activity(
     grn_quantity,
     crate_weight,
     source_warehouse,
-    eretail_grn,
 ):
     delete_draft_crate_activities(crate_id)
     doc = frappe.new_doc("Crate Activity")
@@ -369,7 +370,6 @@ def create_crate_splitting_activity(
     doc.grn_quantity = grn_quantity
     doc.crate_weight = crate_weight
     doc.source_warehouse = source_warehouse
-    doc.eretail_grn = eretail_grn
     doc.status = "Completed"
     doc.save()
     frappe.db.commit()
@@ -465,9 +465,10 @@ def procurement(crate: dict, activity: str):
     validate_item(item_code)
     validate_supplier(supplier)
     validate_crate_availability(crate_id, item_code, supplier)
-    grn_quantity, moisture_loss = validate_procurement_quantity(
-        quantity, item_code, crate.get("isFinal")
-    )
+    # grn_quantity, moisture_loss = validate_procurement_quantity(
+    #     quantity, item_code, crate.get("isFinal")
+    # )
+    grn_quantity = quantity
     create_procurement_activity(
         crate_id=crate_id,
         activity=activity,
@@ -500,7 +501,6 @@ def transfer_out(crate: dict, activity: str):
     validate_source_warehouse(crate_id, source_warehouse)
     validate_destination(source_warehouse, target_warehouse)
     validate_vehicle(vehicle)
-    validate_grn_completed(crate_id)
     validate_not_existing_transfer_out(
         crate_id=crate_id, activity=activity, source_warehouse=source_warehouse
     )
@@ -641,7 +641,6 @@ def crate_splitting(crate: dict, activity: str):
     parent_grn_quantity = parent_crate.last_known_grn_quantity
     parent_weight = parent_crate.last_known_weight
     supplier_id = parent_crate.supplier_id
-    eretail_grn = parent_crate.eretail_grn
     child_weight = crate["weight"]
     child_grn_quantity = crate["quantity"]
     if stock_uom != "Nos":
@@ -661,7 +660,6 @@ def crate_splitting(crate: dict, activity: str):
         grn_quantity=child_grn_quantity,
         crate_weight=child_weight,
         source_warehouse=source_warehouse,
-        eretail_grn=eretail_grn,
     )
     create_crate_splitting_activity(
         crate_id=parent_crate_id,
@@ -671,7 +669,6 @@ def crate_splitting(crate: dict, activity: str):
         grn_quantity=remaining_parent_quantity,
         crate_weight=remaining_parent_weight,
         source_warehouse=source_warehouse,
-        eretail_grn=eretail_grn,
     )
     displayed_quantity = get_display_quantity_in_uom(child_grn_quantity, stock_uom)
     displayed_parent_quantity = get_display_quantity_in_uom(

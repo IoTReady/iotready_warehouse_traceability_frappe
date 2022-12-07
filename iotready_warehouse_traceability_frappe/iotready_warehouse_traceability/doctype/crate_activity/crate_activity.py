@@ -28,8 +28,6 @@ class CrateActivity(Document):
             self.capture_mode = "Scan"
 
     def maybe_create_activity_summary(self):
-        if not self.activity in ["Transfer Out", "Transfer In"]:
-            return
         filters = {
             "source_warehouse": self.source_warehouse,
             "target_warehouse": self.target_warehouse,
@@ -39,15 +37,20 @@ class CrateActivity(Document):
             "supplier_id": self.supplier_id or ["is", "not set"],
             "creation": [">=", datetime.now().date()],
         }
+        print("filters", filters)
         existing = frappe.get_all(
-            "Activity Summary", filters=filters, fields=["reference_id", "creation"]
+            "Crate Activity Summary",
+            filters=filters,
+            fields=["reference_id", "creation"],
         )
         if len(existing) == 0:
-            doc = frappe.new_doc("Activity Summary")
+            doc = frappe.new_doc("Crate Activity Summary")
             doc.source_warehouse = self.source_warehouse
             doc.target_warehouse = self.target_warehouse
             doc.activity = self.activity
+            doc.status = "Draft"
             doc.vehicle = self.vehicle
+            doc.supplier_id = self.supplier_id
             doc.save()
             self.reference_id = doc.reference_id
         else:

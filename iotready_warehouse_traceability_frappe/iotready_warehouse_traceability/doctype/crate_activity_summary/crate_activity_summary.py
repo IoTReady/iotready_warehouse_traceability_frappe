@@ -8,7 +8,7 @@ from datetime import datetime
 from iotready_warehouse_traceability_frappe import utils
 
 
-class StockEntry(Document):
+class CrateActivitySummary(Document):
     @property
     def number_of_crates(self):
         return len(json.loads(self.crates))
@@ -28,7 +28,6 @@ class StockEntry(Document):
     def items(self):
         crates = json.loads(self.crates)
         return json.dumps(utils.crates_to_items(crates))
-
 
     @frappe.whitelist()
     def submit_summary(self):

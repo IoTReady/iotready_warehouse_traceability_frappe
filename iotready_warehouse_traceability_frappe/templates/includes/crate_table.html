@@ -1,0 +1,96 @@
+<table class="full-width">
+  <tr>
+    <th>No.</th>
+    <th>Crate ID</th>
+    <th>SKU</th>
+    <th>Description</th>
+    <th style="text-align: right">GRN Quantity</th>
+    {% if activity == "Procurement" %}
+    <th style="text-align: right">Moisture Loss Allocation</th>
+    {% else %}
+    <th style="text-align: right">Moisture Loss</th>
+    {% endif %}
+    <th style="text-align: right">Crate Weight</th>
+  </tr>
+  {% for row in crates %}
+  <tr>
+    <td>{{loop.index}}</td>
+    <td>{{row['crate_id']}}</td>
+    <td>{{row['item_code']}}</td>
+    <td>{{row['item_name']}}</td>
+    {% if row['stock_uom'] | lower == 'nos' %}
+    <td style="text-align: right">{{row['grn_quantity'] | int }} Pcs</td>
+    {% else %}
+    <td style="text-align: right">
+      {{row['grn_quantity'] }} Kg
+    </td>
+    {% endif %}
+    {% if activity == "Procurement" and row['stock_uom'] | lower != 'nos' %}
+    <td style="text-align: right">{{(row['crate_weight'] - row['grn_quantity']) | round(3) }} Kg</td>
+    {% else %}
+    <td style="text-align: right">{{row['moisture_loss'] }} Kg</td>
+    {% endif %}
+    <td style="text-align: right">{{row['crate_weight']}} Kg</td>
+    {% if is_editable %}
+    <td style="text-align: center"><button onclick="deleteCrate(event)" class="btn btn-danger btn-delete-app"
+        data-crate_id="{{ row['crate_id'] }}"><i class="octicon octicon-trashcan"
+          data-crate_id="{{ row['crate_id'] }}"></i></button></td>
+    {% endif %}
+  </tr>
+  {% endfor %}
+  <tr>
+    <td colspan="6" style="text-align: right"><b>Total Crate Weight</b></td>
+    <td style="text-align: right"><b>{{total_crate_weight | round(2)}} Kg</b></td>
+  </tr>
+</table>
+
+<style>
+  table,
+  th,
+  td {
+    border: 1px solid;
+    padding: 0.5rem;
+  }
+
+  .full-width {
+    width: 100%;
+  }
+</style>
+
+<script>
+  const deleteCrate = (event) => {
+    const crate_id = event.target.getAttribute("data-crate_id");
+    const crate = {
+      crate_id
+    }
+    const activity = "Delete";
+    const message =
+      `<p>Are you sure you want to delete crate ${crate_id} from this document?</p>`;
+    frappe.warn(
+      "This action cannot be reversed.",
+      message,
+      () => {
+        frappe.call({
+          method: "bb_fnv_frappe.utils.delete_crate",
+          type: "POST",
+          args: {
+            crate,
+            activity
+          },
+          callback: (r) => {
+            console.log(r);
+            if (r.exc) {
+              frappe.throw(r.exc);
+            } else {
+              window.location.reload();
+            }
+          },
+          freeze: true,
+          freeze_message: "Please wait...",
+          async: true,
+        });
+      },
+      () => { }
+    );
+  }
+</script>

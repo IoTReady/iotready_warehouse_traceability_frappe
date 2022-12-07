@@ -13,7 +13,6 @@ class Crate(Document):
         filters = {
             "crate_id": self.name,
             "activity": ["in", ["Procurement", "Crate Splitting"]],
-            "eretail_grn": ["is", "set"],
         }
         last = frappe.db.get_all(
             "Crate Activity", filters=filters, fields=["name"], limit=1
@@ -45,21 +44,12 @@ class Crate(Document):
         return frappe.db.get_value("Crate Activity", self.last_activity, "creation")
 
     @property
-    def eretail_grn(self):
+    def purchase_receipt(self):
         if not self.last_procurement:
             return None
         return frappe.db.get_value(
-            "Crate Activity", self.last_procurement, "eretail_grn"
+            "Crate Activity", self.last_procurement, "reference_id"
         )
-
-    @property
-    def purchase_receipt(self):
-        if not self.eretail_grn:
-            return None
-        filters = {"eretail_grn": self.eretail_grn}
-        last = frappe.db.get_all("Purchase Receipt", filters=filters, limit=1)
-        if len(last) > 0:
-            return last[0]["name"]
 
     @property
     def procured_grn_quantity(self):
@@ -139,7 +129,7 @@ class Crate(Document):
         if not self.purchase_receipt:
             return None
         return frappe.db.get_value(
-            "Purchase Receipt", self.purchase_receipt, "creation"
+            "Crate Activity Summary", self.purchase_receipt, "creation"
         )
 
     @property
@@ -147,13 +137,13 @@ class Crate(Document):
         if not self.purchase_receipt:
             return None
         return frappe.db.get_value(
-            "Purchase Receipt", self.purchase_receipt, "warehouse_id"
+            "Crate Activity Summary", self.purchase_receipt, "source_warehouse"
         )
 
     @property
     def procurement_warehouse_name(self):
-        if not self.purchase_receipt:
+        if not self.procurement_warehouse_id:
             return None
         return frappe.db.get_value(
-            "Purchase Receipt", self.purchase_receipt, "warehouse_name"
+            "Warehouse", self.procurement_warehouse_id, "warehouse_name"
         )
