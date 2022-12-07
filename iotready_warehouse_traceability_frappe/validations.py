@@ -52,11 +52,11 @@ def validate_destination(source_warehouse, target_warehouse):
     ), f"Target {target_warehouse} does not exist"
     assert (
         frappe.db.count(
-            "Warehouse Table",
+            "Production Plan Material Request Warehouse",
             filters={
                 "parenttype": "Warehouse",
                 "parent": source_warehouse,
-                "warehouse_id": target_warehouse,
+                "warehouse": target_warehouse,
             },
         )
         > 0

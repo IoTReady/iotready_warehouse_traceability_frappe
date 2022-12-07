@@ -63,6 +63,9 @@ class CrateActivitySummary(Document):
     def set_crates_completed(self, crates):
         crates = json.loads(crates)
         for row in crates:
+            if self.activity in ["Procurement", "Crate Splitting"]:
+                utils.set_crate_availability(row["crate_id"], False)
+                utils.set_crate_available_at(row["crate_id"], None)
             # Do a save so that maybe_release_crate is triggered
             crate_activity = frappe.get_doc("Crate Activity", row["name"])
             crate_activity.status = "Completed"

@@ -2,10 +2,13 @@ import json
 import requests
 from joblib import Parallel, delayed
 
-usr = "cc@iotready.co"
-pwd = "iotready"
+# usr = "cc@iotready.co"
+# pwd = "iotready"
+usr = "tej@iotready.co"
+pwd = "godesi2702"
 
-base_url = "http://localhost:8000"
+# base_url = "http://localhost:8000"
+base_url = "https://godesi-dev.frappe.cloud"
 
 headers = {
     "Content-Type": "application/json",
@@ -48,11 +51,11 @@ def procure_crate(crate_id):
     print(crate_id)
     crate = {
         "crate_id": crate_id,
-        "item_code": "Imli Pop 1",
-        "quantity": 10.3,
-        "weight": 10.3,
+        "item_code": "FG-Tangy Imli 4 pcs",
+        "quantity": 20,
+        "weight": 10,
         "isFinal": True,
-        "supplier": "SIRA 1",
+        "supplier": "Test - 1",
     }
     record_events(crate, "Procurement")
 
@@ -105,7 +108,7 @@ def split_crate(crate_id):
 if __name__ == "__main__":
     login()
     get_configuration()
-    crates = generate_crates(count=60)
+    crates = generate_crates(count=1)
     # print(crates)
     # Procure crates
     for crate_id in crates:

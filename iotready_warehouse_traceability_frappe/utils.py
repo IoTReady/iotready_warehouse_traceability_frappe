@@ -500,7 +500,7 @@ def transfer_out(crate: dict, activity: str):
     target_warehouse = crate["target_warehouse"]
     vehicle = crate["vehicle"]
     validate_crate(crate_id)
-    validate_crate_in_use(crate_id)
+    # validate_crate_in_use(crate_id)
     validate_source_warehouse(crate_id, source_warehouse)
     validate_destination(source_warehouse, target_warehouse)
     validate_vehicle(vehicle)
