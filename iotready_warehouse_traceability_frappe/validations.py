@@ -95,31 +95,31 @@ def validate_crate_at_parent_warehouse(crate_id, target_warehouse):
     ), f"Crate {crate_id} not at {parent_warehouse}"
 
 
-def validate_procurement_quantity(quantity, item_code, is_final=False):
-    item = frappe.get_doc("Item", item_code)
-    if item.stock_uom == "Nos":
-        # bought in pieces
-        expected_quantity = item.standard_crate_quantity
-        lower_limit = expected_quantity
-        upper_limit = expected_quantity
-        moisture_loss_percent = 0
-    else:
-        # bought in kg
-        # quantity = quantity / 1000.0
-        moisture_loss_percent = item.moisture_loss
-        expected_quantity = item.standard_crate_quantity * (
-            1 + moisture_loss_percent / 100
-        )
-        lower_limit = expected_quantity - item.crate_lower_tolerance
-        upper_limit = expected_quantity + item.crate_upper_tolerance
-    print(lower_limit, upper_limit)
-    if quantity < lower_limit and not is_final:
-        raise Exception("Quantity Under Limit")
-    elif quantity > upper_limit:
-        raise Exception("Quantity Above Limit")
-    moisture_loss = (moisture_loss_percent * quantity) / 100.0
-    grn_quantity = quantity - moisture_loss
-    return grn_quantity, moisture_loss
+# def validate_procurement_quantity(quantity, item_code, is_final=False):
+#     item = frappe.get_doc("Item", item_code)
+#     if item.stock_uom == "Nos":
+#         # bought in pieces
+#         expected_quantity = item.standard_crate_quantity
+#         lower_limit = expected_quantity
+#         upper_limit = expected_quantity
+#         moisture_loss_percent = 0
+#     else:
+#         # bought in kg
+#         # quantity = quantity / 1000.0
+#         moisture_loss_percent = item.moisture_loss
+#         expected_quantity = item.standard_crate_quantity * (
+#             1 + moisture_loss_percent / 100
+#         )
+#         lower_limit = expected_quantity - item.crate_lower_tolerance
+#         upper_limit = expected_quantity + item.crate_upper_tolerance
+#     print(lower_limit, upper_limit)
+#     if quantity < lower_limit and not is_final:
+#         raise Exception("Quantity Under Limit")
+#     elif quantity > upper_limit:
+#         raise Exception("Quantity Above Limit")
+#     moisture_loss = (moisture_loss_percent * quantity) / 100.0
+#     grn_quantity = quantity - moisture_loss
+#     return grn_quantity, moisture_loss
 
 
 def validate_submitted_transfer_out(crate_id, target_warehouse):
