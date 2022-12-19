@@ -3,9 +3,21 @@
 
 import frappe
 from frappe.model.document import Document
+from iotready_warehouse_traceability_frappe.qrcode import qrcode_as_png
 
 
 class Crate(Document):
+    def before_insert(self):
+        self.generate_qrcode_image()
+
+    @frappe.whitelist()
+    def generate_qrcode_image(self, save=False):
+        self.qrcode = qrcode_as_png(self.id, self.doctype, self.name)
+        if save:
+            self.save()
+            frappe.db.commit()
+        return True
+
     @property
     def last_procurement(self):
         if self.is_available_for_procurement:

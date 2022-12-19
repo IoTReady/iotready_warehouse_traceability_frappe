@@ -30,7 +30,8 @@
   "procurement_warehouse_id",
   "procurement_warehouse_name",
   "activities_section",
-  "last_procurement"
+  "last_procurement",
+  "qrcode"
  ],
  "fields": [
   {
@@ -176,10 +177,17 @@
    "fieldtype": "Datetime",
    "is_virtual": 1,
    "label": "Last Activity Timestamp"
+  },
+  {
+   "fieldname": "qrcode",
+   "fieldtype": "Attach Image",
+   "in_preview": 1,
+   "label": "QRCode"
   }
  ],
+ "image_field": "qrcode",
  "links": [],
- "modified": "2022-12-07 11:17:21.735712",
+ "modified": "2022-12-19 18:49:20.562437",
  "modified_by": "Administrator",
  "module": "IoTReady Warehouse Traceability",
  "name": "Crate",

@@ -105,7 +105,6 @@ def activity_crates(
     crates = frappe.get_all(
         "Crate Activity",
         filters=filters,
-        # distinct=distinct,
         fields=[
             "name",
             "crate_id",
