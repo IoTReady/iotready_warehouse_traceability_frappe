@@ -1,0 +1,86 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2023-01-09 17:31:49.083016",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "hooks_section",
+  "event_hook",
+  "submit_hook",
+  "column_break_3",
+  "crate_table_hook",
+  "sku_table_hook",
+  "section_break_7",
+  "time_before_crate_release"
+ ],
+ "fields": [
+  {
+   "fieldname": "hooks_section",
+   "fieldtype": "Section Break",
+   "label": "Hooks"
+  },
+  {
+   "description": "Run as soon as a Crate Activity is recorded. Use this to add validations and custom responses.",
+   "fieldname": "event_hook",
+   "fieldtype": "Data",
+   "label": "Event Hook"
+  },
+  {
+   "description": "Run as soon as a Crate Activity Summary is submitted. Use this to trigger workflows such as creation of Stock Entries or Work Orders.",
+   "fieldname": "submit_hook",
+   "fieldtype": "Data",
+   "label": "Submit Hook"
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Use this to override the default information shown in the crate table in Crate Activity Summary.",
+   "fieldname": "crate_table_hook",
+   "fieldtype": "Data",
+   "label": "Crate Table Hook"
+  },
+  {
+   "description": "Use this to override the default information shown in the SKU table in Crate Activity Summary.",
+   "fieldname": "sku_table_hook",
+   "fieldtype": "Data",
+   "label": "SKU Table Hook"
+  },
+  {
+   "fieldname": "section_break_7",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "time_before_crate_release",
+   "fieldtype": "Int",
+   "label": "Time Before Crate Release (Minutes)"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2023-01-09 17:42:45.812369",
+ "modified_by": "Administrator",
+ "module": "IoTReady Warehouse Traceability",
+ "name": "IoTReady Traceability Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
