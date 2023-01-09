@@ -25,6 +25,8 @@ class CrateActivity(Document):
             self.capture_mode = "Scan"
 
     def maybe_create_activity_summary(self):
+        if not self.activity in ["Procurement", "Transfer Out", "Transfer In"]:
+            return
         filters = {
             "source_warehouse": self.source_warehouse,
             "target_warehouse": self.target_warehouse,
