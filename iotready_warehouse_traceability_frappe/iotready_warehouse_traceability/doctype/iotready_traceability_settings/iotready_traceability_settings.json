@@ -8,31 +8,30 @@
  "engine": "InnoDB",
  "field_order": [
   "hooks_section",
-  "event_hook",
-  "submit_hook",
+  "procurement_event_hook",
+  "transfer_out_event_hook",
+  "transfer_in_event_hook",
+  "delete_event_hook",
   "column_break_3",
+  "procurement_submit_hook",
+  "transfer_out_submit_hook",
+  "transfer_in_submit_hook",
+  "other_hooks_section",
+  "get_user_warehouse_hook",
+  "get_configuration_hook",
+  "column_break_11",
   "crate_table_hook",
   "sku_table_hook",
   "section_break_7",
-  "time_before_crate_release"
+  "time_before_crate_release",
+  "enable_cycle_count"
  ],
  "fields": [
   {
+   "description": "Event hooks run as soon as a Crate Activity is recorded. Use these to add validations and custom responses. Each event hook will receive 2 parameters: crate and activity.\n\nSubmit hooks run as soon as a Crate Activity Summary is submitted. Use these to trigger workflows such as creation of Stock Entries or Work Orders.",
    "fieldname": "hooks_section",
    "fieldtype": "Section Break",
    "label": "Hooks"
-  },
-  {
-   "description": "Run as soon as a Crate Activity is recorded. Use this to add validations and custom responses.",
-   "fieldname": "event_hook",
-   "fieldtype": "Data",
-   "label": "Event Hook"
-  },
-  {
-   "description": "Run as soon as a Crate Activity Summary is submitted. Use this to trigger workflows such as creation of Stock Entries or Work Orders.",
-   "fieldname": "submit_hook",
-   "fieldtype": "Data",
-   "label": "Submit Hook"
   },
   {
    "fieldname": "column_break_3",
@@ -52,18 +51,81 @@
   },
   {
    "fieldname": "section_break_7",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "label": "Other Settings"
   },
   {
    "fieldname": "time_before_crate_release",
    "fieldtype": "Int",
    "label": "Time Before Crate Release (Minutes)"
+  },
+  {
+   "fieldname": "procurement_event_hook",
+   "fieldtype": "Data",
+   "label": "Procurement Event Hook"
+  },
+  {
+   "fieldname": "procurement_submit_hook",
+   "fieldtype": "Data",
+   "label": "Procurement Submit Hook"
+  },
+  {
+   "fieldname": "transfer_out_event_hook",
+   "fieldtype": "Data",
+   "label": "Transfer Out Event Hook"
+  },
+  {
+   "fieldname": "transfer_out_submit_hook",
+   "fieldtype": "Data",
+   "label": "Transfer Out Submit Hook"
+  },
+  {
+   "fieldname": "transfer_in_submit_hook",
+   "fieldtype": "Data",
+   "label": "Transfer In Submit Hook"
+  },
+  {
+   "fieldname": "transfer_in_event_hook",
+   "fieldtype": "Data",
+   "label": "Transfer In Event Hook"
+  },
+  {
+   "fieldname": "column_break_11",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "enable_cycle_count",
+   "fieldtype": "Check",
+   "label": "Enable Cycle Count"
+  },
+  {
+   "fieldname": "other_hooks_section",
+   "fieldtype": "Section Break",
+   "label": "Other Hooks"
+  },
+  {
+   "fieldname": "get_user_warehouse_hook",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Get User Warehouse Hook",
+   "reqd": 1
+  },
+  {
+   "fieldname": "get_configuration_hook",
+   "fieldtype": "Data",
+   "label": "Get Configuration Hook"
+  },
+  {
+   "fieldname": "delete_event_hook",
+   "fieldtype": "Data",
+   "label": "Delete Event Hook"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-01-09 17:42:45.812369",
+ "modified": "2023-01-09 19:14:41.389995",
  "modified_by": "Administrator",
  "module": "IoTReady Warehouse Traceability",
  "name": "IoTReady Traceability Settings",

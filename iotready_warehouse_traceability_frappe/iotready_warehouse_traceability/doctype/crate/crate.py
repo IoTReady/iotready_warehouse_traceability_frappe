@@ -7,8 +7,8 @@ from iotready_warehouse_traceability_frappe.qrcode import qrcode_as_png
 
 
 class Crate(Document):
-    def before_insert(self):
-        self.generate_qrcode_image()
+    # def before_insert(self):
+    # self.generate_qrcode_image()
 
     @frappe.whitelist()
     def generate_qrcode_image(self, save=False):
@@ -112,15 +112,15 @@ class Crate(Document):
 
     @property
     def item_name(self):
-        if not self.item_code:
+        if not self.last_procurement:
             return None
-        return frappe.db.get_value("Item", self.item_code, "item_name")
+        return frappe.db.get_value("Crate Activity", self.last_procurement, "item_name")
 
     @property
     def stock_uom(self):
-        if not self.item_code:
+        if not self.last_procurement:
             return None
-        return frappe.db.get_value("Item", self.item_code, "stock_uom")
+        return frappe.db.get_value("Crate Activity", self.last_procurement, "stock_uom")
 
     @property
     def supplier_id(self):
@@ -132,30 +132,22 @@ class Crate(Document):
 
     @property
     def supplier_name(self):
-        if not self.supplier_id:
+        if not self.last_procurement:
             return None
-        return frappe.db.get_value("Supplier", self.supplier_id, "supplier_name")
+        return frappe.db.get_value(
+            "Crate Activity", self.last_procurement, "supplier_name"
+        )
 
     @property
     def procurement_timestamp(self):
-        if not self.purchase_receipt:
+        if not self.last_procurement:
             return None
-        return frappe.db.get_value(
-            "Crate Activity Summary", self.purchase_receipt, "creation"
-        )
+        return frappe.db.get_value("Crate Activity", self.last_procurement, "creation")
 
     @property
     def procurement_warehouse_id(self):
-        if not self.purchase_receipt:
+        if not self.last_procurement:
             return None
         return frappe.db.get_value(
-            "Crate Activity Summary", self.purchase_receipt, "source_warehouse"
-        )
-
-    @property
-    def procurement_warehouse_name(self):
-        if not self.procurement_warehouse_id:
-            return None
-        return frappe.db.get_value(
-            "Warehouse", self.procurement_warehouse_id, "warehouse_name"
+            "Crate Activity", self.last_procurement, "source_warehouse"
         )

@@ -18,9 +18,6 @@ class CrateActivity(Document):
             not self.status == "Completed"
         ), "Activity cannot be deleted after submission."
 
-    def before_save(self):
-        self.maybe_release_crate()
-
     def set_capture_mode(self):
         if self.crate_weight:
             self.capture_mode = "Weight"
@@ -37,7 +34,6 @@ class CrateActivity(Document):
             "supplier_id": self.supplier_id or ["is", "not set"],
             "creation": [">=", datetime.now().date()],
         }
-        print("filters", filters)
         existing = frappe.get_all(
             "Crate Activity Summary",
             filters=filters,
@@ -55,10 +51,13 @@ class CrateActivity(Document):
             self.reference_id = doc.reference_id
         else:
             self.reference_id = existing[0]["reference_id"]
-            print("using existing reference_id", self.reference_id)
+            # print("using existing reference_id", self.reference_id)
 
     def maybe_update_quantities(self):
-        if self.activity in ["Procurement", "Delete", "Crate Splitting"]:
+        if self.activity in [
+            "Procurement",
+            "Crate Splitting",
+        ]:
             return
         crate = frappe.get_doc("Crate", self.crate_id)
         self.item_code = crate.item_code
@@ -70,10 +69,17 @@ class CrateActivity(Document):
             return
         if not self.source_warehouse and self.activity == "Transfer In":
             self.source_warehouse = crate.last_known_warehouse
-        if self.crate_weight and crate.stock_uom.lower() not in ["nos", "pcs"]:
+        if (
+            self.crate_weight
+            and crate.stock_uom
+            and crate.stock_uom.lower() not in ["nos", "pcs"]
+        ):
+            enable_cycle_count = frappe.db.get_single_value(
+                "IoTReady Traceability Settings", "enable_cycle_count"
+            )
+            if not enable_cycle_count:
+                return
             # Do a cycle count here
-            # convert to kg first
-            # self.crate_weight = self.crate_weight / 1000
             if self.crate_weight < crate.procured_grn_quantity:
                 self.actual_loss = crate.procured_grn_quantity - self.crate_weight
                 if crate.last_known_weight > crate.procured_grn_quantity:
@@ -93,17 +99,3 @@ class CrateActivity(Document):
             self.crate_weight = crate.last_known_weight
         if not self.grn_quantity:
             self.grn_quantity = crate.last_known_grn_quantity
-
-    def maybe_release_crate(self):
-        if not (self.activity in ["Transfer In"] and self.status == "Completed"):
-            return
-        target_warehouse_type = frappe.db.get_value(
-            "Warehouse", self.target_warehouse, "warehouse_type"
-        )
-        is_consumption_point = frappe.db.get_value(
-            "Warehouse", self.target_warehouse, "is_consumption_point"
-        ) or frappe.db.get_value(
-            "Warehouse Type", target_warehouse_type, "is_consumption_point"
-        )
-        if is_consumption_point:
-            utils.release_crate(self.crate_id)

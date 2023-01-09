@@ -1,9 +1,11 @@
 import json
 import frappe
-import requests
 from datetime import datetime, timedelta
 from iotready_warehouse_traceability_frappe.validations import *
-from iotready_godesi.api import generate_label
+
+get_user_warehouse_hook = frappe.db.get_single_value(
+    "IoTReady Traceability Settings", "get_user_warehouse_hook"
+)
 
 
 def normal_round(num, ndigits=0):
@@ -40,35 +42,6 @@ def get_display_quantity_in_uom(qty, uom):
     return display_qty
 
 
-def get_item_uom(item_code):
-    return frappe.get_value("Item", item_code, "stock_uom")
-
-
-def get_moisture_loss_percent(item_code):
-    """
-    Given an SKU, returns the moisture loss percent.
-    """
-    stock_uom = get_item_uom(item_code)
-    if stock_uom.lower() in ["nos", "pcs"]:
-        moisture_loss_percent = 0
-    else:
-        moisture_loss_percent = frappe.db.get_value("Item", item_code, "moisture_loss")
-    return moisture_loss_percent, stock_uom
-
-
-def get_user_warehouse():
-    """
-    Utility function to retrieve a user's warehouse.
-    """
-    warehouses = frappe.get_all(
-        "User Group Member",
-        filters={"user": frappe.session.user, "parenttype": "Warehouse"},
-        fields=["parent"],
-    )
-    assert len(warehouses) > 0, "User not assigned to any warehouse."
-    return warehouses[0]["parent"]
-
-
 def set_crate_availability(crate_id, is_available_for_procurement):
     frappe.db.set_value(
         "Crate", crate_id, "is_available_for_procurement", is_available_for_procurement
@@ -81,12 +54,12 @@ def set_crate_available_at(crate_id, available_at):
 
 def release_crate(crate_id, delayed=True):
     set_crate_availability(crate_id, True)
-    config = frappe.get_doc("FnV Settings", "FnV Settings")
+    time_before_crate_release = frappe.db.get_single_value(
+        "IoTReady Traceability Settings", "time_before_crate_release"
+    )
     now = datetime.now()
     if delayed:
-        available_at = now + timedelta(
-            minutes=int(config.time_before_crate_release or 15)
-        )
+        available_at = now + timedelta(minutes=int(time_before_crate_release or 15))
     else:
         available_at = now
     set_crate_available_at(crate_id, available_at)
@@ -212,6 +185,7 @@ def maybe_update_activity_fields(crate, doc):
     return doc
 
 
+# TODO: Move to customer specific app via hook
 def get_crate_details(crate_id: str):
     """
     Given a batch, return all events from procurement to stock entries.
@@ -227,9 +201,6 @@ def get_crate_details(crate_id: str):
             "stock_uom": item.stock_uom,
             "uom_quantity": item.uom_quantity,
             "standard_crate_quantity": item.tertiary_package_quantity or 0,
-            # "moisture_loss": item.moisture_loss,
-            # "lower_tolerance": item.crate_lower_tolerance,
-            # "upper_tolerance": item.crate_upper_tolerance,
         },
         "batch_quantity": crate_doc.last_known_weight,
         "grn_quantity": crate_doc.last_known_grn_quantity,
@@ -247,49 +218,25 @@ def get_crate_details(crate_id: str):
     return payload
 
 
-def create_procurement_label(crate_id):
-    crate_doc = frappe.get_doc("Crate", crate_id)
-    crate = {}
-    crate["procured_timestamp"] = crate_doc.procurement_timestamp.strftime(
-        "%y%m%d%H%M%S"
-    )
-    crate["procured_date"] = crate_doc.procurement_timestamp.strftime("%d-%m-%y")
-    crate["procured_warehouse_id"] = crate_doc.procurement_warehouse_id
-    crate["procured_warehouse_name"] = crate_doc.procurement_warehouse_name
-    crate["supplier"] = crate_doc.supplier_id
-    crate["item_code"] = crate_doc.item_code
-    crate["item_name"] = crate_doc.item_name
-    crate["stock_uom"] = crate_doc.stock_uom
-    crate["uom_quantity"] = frappe.db.get_value(
-        "Item", crate_doc.item_code, "uom_quantity"
-    )
-    grn_quantity = crate_doc.last_known_grn_quantity
-    crate["quantity"] = grn_quantity
-    crate["displayedQuantity"] = get_display_quantity_in_uom(
-        grn_quantity, crate_doc.stock_uom
-    )
-    return crate
-
-
 def create_procurement_activity(
     crate_id,
     activity,
     supplier,
     item_code,
+    stock_uom,
     grn_quantity,
     crate_weight,
     source_warehouse,
 ):
-    print("create_procurement_activity", crate_id)
     delete_draft_crate_activities(crate_id)
     doc = frappe.new_doc("Crate Activity")
     doc.crate_id = crate_id
     doc.activity = activity
     doc.supplier_id = supplier
     doc.item_code = item_code
+    doc.stock_uom = stock_uom
     doc.grn_quantity = grn_quantity
     doc.crate_weight = crate_weight
-    # doc.moisture_loss = moisture_loss
     doc.source_warehouse = source_warehouse
     doc.target_warehouse = source_warehouse
     doc.save()
@@ -374,81 +321,15 @@ def create_crate_splitting_activity(
     frappe.db.commit()
 
 
+# TODO: Move to customer specific app via hook
 def get_configuration():
     """
     Called by app user to retrieve warehouse configuration.
     """
-    warehouse = get_user_warehouse()
-    warehouse_doc = frappe.get_doc("Warehouse", warehouse)
-    destination_warehouses = []
-    for row in warehouse_doc.destination_table:
-        destination_warehouses.append(
-            {
-                "warehouse_id": row.warehouse,
-                "warehouse_name": frappe.db.get_value(
-                    "Warehouse", row.warehouse, "warehouse_name"
-                ),
-            }
-        )
-
-    item_refs = [row.item_code for row in warehouse_doc.item_table]
-    items = frappe.get_all(
-        "Item",
-        fields=[
-            "item_code",
-            "item_name",
-            "stock_uom",
-            "uom_quantity",
-            # "standard_crate_quantity",
-            # "moisture_loss",
-            # "crate_lower_tolerance",
-            # "crate_upper_tolerance",
-        ],
-        filters={"disabled": 0, "name": ["in", item_refs]},
+    get_configuration_hook = frappe.db.get_single_value(
+        "IoTReady Traceability Settings", "get_configuration_hook"
     )
-    for item in items:
-        if item["stock_uom"].lower() in ["nos", "pcs"]:
-            item["stock_uom"] = "Nos"
-    suppliers = [
-        {
-            "supplier_id": row.supplier,
-            "supplier_name": frappe.db.get_value(
-                "Supplier", row.supplier, "supplier_name"
-            ),
-        }
-        for row in warehouse_doc.supplier_table
-        if frappe.db.get_value("Supplier", row.supplier, "disabled") != 1
-    ]
-    vehicles = frappe.get_all(
-        "Vehicle",
-        fields=[
-            "license_plate",
-            "transporter",
-            "vehicle_type",
-            "vehicle_crate_capacity",
-        ],
-    )
-    # material_requests = get_material_requests()
-    payload = {
-        "email": frappe.session.user,
-        "full_name": frappe.db.get_value("User", frappe.session.user, "full_name"),
-        "crate_weight": warehouse_doc.crate_weight,
-        "warehouse": warehouse,
-        "warehouse_name": warehouse_doc.warehouse_name,
-        "destination_warehouses": destination_warehouses,
-        "items": items,
-        "suppliers": suppliers,
-        "vehicles": vehicles,
-        # "material_requests": material_requests,
-        "roles": [
-            role
-            for role in frappe.get_roles()
-            if role not in ["All", "Guest", "System Manager"]
-        ],
-        "crate_label_template": warehouse_doc.crate_label_template,
-        "allowed_activities": list(allowed_activities.keys()),
-    }
-    return payload
+    return frappe.get_attr(get_configuration_hook)()
 
 
 def procurement(crate: dict, activity: str):
@@ -456,37 +337,26 @@ def procurement(crate: dict, activity: str):
     Dispatcher for Procurement called by api.record_events
     Validates crate and adds to Purchase Receipt
     """
-    source_warehouse = get_user_warehouse()
+    source_warehouse = frappe.get_attr(get_user_warehouse_hook)()
     crate["crate_id"] = crate["crate_id"].strip()
     crate_id = crate["crate_id"]
     item_code = crate["item_code"]
+    stock_uom = crate["stock_uom"]
     quantity = crate["quantity"]
     supplier = crate["supplier"]
-    # convert to kg
     crate_weight = crate["weight"]
-    validate_item(item_code)
-    validate_supplier(supplier)
-    validate_crate_availability(crate_id, item_code, supplier)
-    # grn_quantity, moisture_loss = validate_procurement_quantity(
-    #     quantity, item_code, crate.get("isFinal")
-    # )
     grn_quantity = quantity
     create_procurement_activity(
         crate_id=crate_id,
         activity=activity,
         supplier=supplier,
         item_code=item_code,
+        stock_uom=stock_uom,
         grn_quantity=grn_quantity,
         crate_weight=crate_weight,
         source_warehouse=source_warehouse,
     )
-    label = generate_label(
-        warehouse_id=source_warehouse,
-        crate_id=crate_id,
-        item_code=item_code,
-        quantity=quantity,
-    )
-    return {"success": True, "message": "Crate Added", "label": label}
+    return {"success": True, "message": "Crate Added"}
 
 
 def transfer_out(crate: dict, activity: str):
@@ -495,20 +365,9 @@ def transfer_out(crate: dict, activity: str):
     """
     crate["crate_id"] = crate["crate_id"].strip()
     crate_id = crate["crate_id"]
-    source_warehouse = get_user_warehouse()
+    source_warehouse = frappe.get_attr(get_user_warehouse_hook)()
     target_warehouse = crate["target_warehouse"]
     vehicle = crate["vehicle"]
-    validate_crate(crate_id)
-    validate_crate_in_use(crate_id)
-    validate_source_warehouse(crate_id, source_warehouse)
-    validate_destination(source_warehouse, target_warehouse)
-    validate_vehicle(vehicle)
-    validate_not_existing_transfer_out(
-        crate_id=crate_id, activity=activity, source_warehouse=source_warehouse
-    )
-    # material_request, material_request_item = validate_material_request(
-    #     crate, source_warehouse, target_warehouse
-    # )
     create_transfer_out_activity(
         crate_id=crate_id,
         activity=activity,
@@ -526,20 +385,7 @@ def transfer_in(crate: dict, activity: str):
     """
     crate["crate_id"] = crate["crate_id"].strip()
     crate_id = crate["crate_id"]
-    target_warehouse = get_user_warehouse()
-    validate_crate(crate_id)
-    validate_crate_in_use(crate_id)
-    if (
-        frappe.db.get_value("Warehouse", target_warehouse, "warehouse_type")
-        == "Processing"
-    ):
-        validate_crate_at_parent_warehouse(crate_id, target_warehouse)
-        all_crates = []
-    else:
-        all_crates = validate_submitted_transfer_out(crate_id, target_warehouse)
-    validate_not_existing_transfer_in(crate_id, target_warehouse)
-    if crate.get("need_label"):
-        crate.update(create_procurement_label(crate_id))
+    target_warehouse = frappe.get_attr(get_user_warehouse_hook)()
     create_transfer_in_activity(
         crate_id=crate_id,
         activity=activity,
@@ -549,8 +395,6 @@ def transfer_in(crate: dict, activity: str):
     return {
         "success": True,
         "message": "Transferred In.",
-        "crate": crate,
-        "all_crates": all_crates,
     }
 
 
@@ -563,9 +407,7 @@ def delete_crate(crate: dict, activity: str):
         crate = json.loads(crate)
     crate["crate_id"] = crate["crate_id"].strip()
     crate_id = crate["crate_id"]
-    validate_crate(crate_id)
-    source_warehouse = get_user_warehouse()
-    validate_source_warehouse(crate_id, source_warehouse)
+    source_warehouse = frappe.get_attr(get_user_warehouse_hook)()
     delete_draft_crate_activities(crate_id)
     create_delete_activity(
         crate_id=crate_id, activity=activity, source_warehouse=source_warehouse
@@ -576,114 +418,114 @@ def delete_crate(crate: dict, activity: str):
     }
 
 
-def cycle_count(crate: dict, activity: str):
-    """
-    Updates and tracks crate weight and moisture loss.
-    """
-    crate["crate_id"] = crate["crate_id"].strip()
-    crate_id = crate["crate_id"]
-    validate_crate(crate_id)
-    validate_crate_in_use(crate_id)
-    source_warehouse = get_user_warehouse()
-    validate_source_warehouse(crate_id, source_warehouse)
-    doc = create_cycle_count_activity(
-        crate_id=crate_id,
-        activity=activity,
-        source_warehouse=source_warehouse,
-        crate=crate,
-    )
-    if doc.actual_loss and doc.actual_loss > 0:
-        raise Exception(
-            f"Actual loss of {normal_round(doc.actual_loss,2)} kg and moisture loss of {normal_round(doc.moisture_loss,2)} kg recorded."
-        )
-    elif doc.moisture_loss and doc.moisture_loss > 0:
-        raise Exception(
-            f"Moisture loss of {normal_round(doc.moisture_loss,2)} kg recorded."
-        )
-    elif doc.excess_weight and doc.excess_weight > 0:
-        raise Exception(f"Weight increased by {normal_round(doc.excess_weight,2)} kg.")
-    return {
-        "success": True,
-        "message": "No change in weight.",
-    }
+# def cycle_count(crate: dict, activity: str):
+#     """
+#     Updates and tracks crate weight and moisture loss.
+#     """
+#     crate["crate_id"] = crate["crate_id"].strip()
+#     crate_id = crate["crate_id"]
+#     validate_crate(crate_id)
+#     validate_crate_in_use(crate_id)
+#     source_warehouse = frappe.get_attr(get_user_warehouse_hook)()
+#     validate_source_warehouse(crate_id, source_warehouse)
+#     doc = create_cycle_count_activity(
+#         crate_id=crate_id,
+#         activity=activity,
+#         source_warehouse=source_warehouse,
+#         crate=crate,
+#     )
+#     if doc.actual_loss and doc.actual_loss > 0:
+#         raise Exception(
+#             f"Actual loss of {normal_round(doc.actual_loss,2)} kg and moisture loss of {normal_round(doc.moisture_loss,2)} kg recorded."
+#         )
+#     elif doc.moisture_loss and doc.moisture_loss > 0:
+#         raise Exception(
+#             f"Moisture loss of {normal_round(doc.moisture_loss,2)} kg recorded."
+#         )
+#     elif doc.excess_weight and doc.excess_weight > 0:
+#         raise Exception(f"Weight increased by {normal_round(doc.excess_weight,2)} kg.")
+#     return {
+#         "success": True,
+#         "message": "No change in weight.",
+#     }
 
 
-def identify(crate: dict, activity: str):
-    crate["crate_id"] = crate["crate_id"].strip()
-    crate_id = crate["crate_id"]
-    validate_crate(crate_id)
-    validate_crate_in_use(crate_id)
-    source_warehouse = get_user_warehouse()
-    validate_source_warehouse(crate_id, source_warehouse)
-    create_cycle_count_activity(
-        crate_id=crate_id,
-        activity=activity,
-        source_warehouse=source_warehouse,
-        crate=crate,
-    )
-    payload = {"success": True}
-    payload.update(get_crate_details(crate_id))
-    return payload
+# def identify(crate: dict, activity: str):
+#     crate["crate_id"] = crate["crate_id"].strip()
+#     crate_id = crate["crate_id"]
+#     validate_crate(crate_id)
+#     validate_crate_in_use(crate_id)
+#     source_warehouse = frappe.get_attr(get_user_warehouse_hook)()
+#     validate_source_warehouse(crate_id, source_warehouse)
+#     create_cycle_count_activity(
+#         crate_id=crate_id,
+#         activity=activity,
+#         source_warehouse=source_warehouse,
+#         crate=crate,
+#     )
+#     payload = {"success": True}
+#     payload.update(get_crate_details(crate_id))
+#     return payload
 
 
-def crate_splitting(crate: dict, activity: str):
-    crate["crate_id"] = crate["crate_id"].strip()
-    child_crate_id = crate["crate_id"]
-    parent_crate_id = crate["parent_crate_id"]
-    validate_crate(parent_crate_id)
-    validate_crate_in_use(parent_crate_id)
-    validate_crate_not_in_use(child_crate_id)
-    source_warehouse = get_user_warehouse()
-    validate_source_warehouse(parent_crate_id, source_warehouse)
-    maybe_create_crate(child_crate_id)
-    set_crate_availability(child_crate_id, is_available_for_procurement=False)
-    parent_crate = frappe.get_doc("Crate", parent_crate_id)
-    item_code = parent_crate.item_code
-    stock_uom = parent_crate.stock_uom
-    parent_grn_quantity = parent_crate.last_known_grn_quantity
-    parent_weight = parent_crate.last_known_weight
-    supplier_id = parent_crate.supplier_id
-    child_weight = crate["weight"]
-    child_grn_quantity = crate["quantity"]
-    if stock_uom.lower() in ["nos", "pcs"]:
-        child_grn_quantity = child_weight
-    assert parent_grn_quantity >= child_grn_quantity, "Insufficient Quantity Remaining."
-    remaining_parent_quantity = parent_grn_quantity - child_grn_quantity
-    if remaining_parent_quantity < 0:
-        remaining_parent_quantity = 0
-    remaining_parent_weight = parent_weight - child_weight
-    if remaining_parent_weight < 0:
-        remaining_parent_weight = 0
-    create_crate_splitting_activity(
-        crate_id=child_crate_id,
-        activity=activity,
-        supplier=supplier_id,
-        item_code=item_code,
-        grn_quantity=child_grn_quantity,
-        crate_weight=child_weight,
-        source_warehouse=source_warehouse,
-    )
-    create_crate_splitting_activity(
-        crate_id=parent_crate_id,
-        activity=activity,
-        supplier=supplier_id,
-        item_code=item_code,
-        grn_quantity=remaining_parent_quantity,
-        crate_weight=remaining_parent_weight,
-        source_warehouse=source_warehouse,
-    )
-    displayed_quantity = get_display_quantity_in_uom(child_grn_quantity, stock_uom)
-    displayed_parent_quantity = get_display_quantity_in_uom(
-        remaining_parent_quantity, stock_uom
-    )
-    return {
-        "success": True,
-        "message": f"Child crate created with quantity: {displayed_quantity}",
-        "displayed_quantity": displayed_quantity,
-        "remaining_parent_quantity": normal_round(remaining_parent_quantity, 2),
-        "displayed_parent_quantity": displayed_parent_quantity,
-        "remaining_parent_weight": normal_round(remaining_parent_weight, 2),
-    }
+# def crate_splitting(crate: dict, activity: str):
+#     crate["crate_id"] = crate["crate_id"].strip()
+#     child_crate_id = crate["crate_id"]
+#     parent_crate_id = crate["parent_crate_id"]
+#     validate_crate(parent_crate_id)
+#     validate_crate_in_use(parent_crate_id)
+#     validate_crate_not_in_use(child_crate_id)
+#     source_warehouse = frappe.get_attr(get_user_warehouse_hook)()
+#     validate_source_warehouse(parent_crate_id, source_warehouse)
+#     maybe_create_crate(child_crate_id)
+#     set_crate_availability(child_crate_id, is_available_for_procurement=False)
+#     parent_crate = frappe.get_doc("Crate", parent_crate_id)
+#     item_code = parent_crate.item_code
+#     stock_uom = parent_crate.stock_uom
+#     parent_grn_quantity = parent_crate.last_known_grn_quantity
+#     parent_weight = parent_crate.last_known_weight
+#     supplier_id = parent_crate.supplier_id
+#     child_weight = crate["weight"]
+#     child_grn_quantity = crate["quantity"]
+#     if stock_uom.lower() in ["nos", "pcs"]:
+#         child_grn_quantity = child_weight
+#     assert parent_grn_quantity >= child_grn_quantity, "Insufficient Quantity Remaining."
+#     remaining_parent_quantity = parent_grn_quantity - child_grn_quantity
+#     if remaining_parent_quantity < 0:
+#         remaining_parent_quantity = 0
+#     remaining_parent_weight = parent_weight - child_weight
+#     if remaining_parent_weight < 0:
+#         remaining_parent_weight = 0
+#     create_crate_splitting_activity(
+#         crate_id=child_crate_id,
+#         activity=activity,
+#         supplier=supplier_id,
+#         item_code=item_code,
+#         grn_quantity=child_grn_quantity,
+#         crate_weight=child_weight,
+#         source_warehouse=source_warehouse,
+#     )
+#     create_crate_splitting_activity(
+#         crate_id=parent_crate_id,
+#         activity=activity,
+#         supplier=supplier_id,
+#         item_code=item_code,
+#         grn_quantity=remaining_parent_quantity,
+#         crate_weight=remaining_parent_weight,
+#         source_warehouse=source_warehouse,
+#     )
+#     displayed_quantity = get_display_quantity_in_uom(child_grn_quantity, stock_uom)
+#     displayed_parent_quantity = get_display_quantity_in_uom(
+#         remaining_parent_quantity, stock_uom
+#     )
+#     return {
+#         "success": True,
+#         "message": f"Child crate created with quantity: {displayed_quantity}",
+#         "displayed_quantity": displayed_quantity,
+#         "remaining_parent_quantity": normal_round(remaining_parent_quantity, 2),
+#         "displayed_parent_quantity": displayed_parent_quantity,
+#         "remaining_parent_weight": normal_round(remaining_parent_weight, 2),
+#     }
 
 
 def new_crate():
@@ -700,16 +542,25 @@ allowed_activities = {
     "Transfer Out": transfer_out,
     "Transfer In": transfer_in,
     "Delete": delete_crate,
-    "Cycle Count": cycle_count,
-    "Identify": identify,
-    "Crate Splitting": crate_splitting,
+    # "Cycle Count": cycle_count,
+    # "Identify": identify,
+    # "Crate Splitting": crate_splitting,
 }
 
 
 def record_events(crate, activity):
     try:
         validate_mandatory_fields(crate, activity)
+        prefix = activity.lower().replace(" ", "_")
+        hook = frappe.db.get_single_value(
+            "IoTReady Traceability Settings", f"{prefix}_event_hook"
+        )
+        hook_result = None
+        if hook:
+            hook_result = frappe.get_attr(hook)(crate, activity)
         result = allowed_activities[activity](crate, activity)
+        if hook_result:
+            result.update(hook_result)
     except Exception as e:
         result = {"success": False, "message": str(e)}
     try:

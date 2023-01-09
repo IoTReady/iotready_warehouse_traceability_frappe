@@ -2,13 +2,13 @@ import json
 import requests
 from joblib import Parallel, delayed
 
-# usr = "cc@iotready.co"
-# pwd = "iotready"
-usr = "tej@iotready.co"
-pwd = "godesi2702"
+usr = "cc@iotready.co"
+pwd = "iotready"
+# usr = "tej@iotready.co"
+# pwd = "godesi2702"
 
-# base_url = "http://localhost:8000"
-base_url = "https://godesi-dev.frappe.cloud"
+base_url = "http://localhost:8000"
+# base_url = "https://godesi-dev.frappe.cloud"
 
 headers = {
     "Content-Type": "application/json",
@@ -51,11 +51,12 @@ def procure_crate(crate_id):
     print(crate_id)
     crate = {
         "crate_id": crate_id,
-        "item_code": "FG-Tangy Imli 4 pcs",
+        "item_code": "Imli Pop 1",
+        "stock_uom": "PCS",
         "quantity": 20,
         "weight": 10,
         "isFinal": True,
-        "supplier": "Test - 1",
+        "supplier": "SIRA 1",
     }
     record_events(crate, "Procurement")
 
@@ -64,7 +65,7 @@ def transfer_out_crate(crate_id):
     print(crate_id)
     crate = {
         "crate_id": crate_id,
-        "target_warehouse": "KPMMNLTO",
+        "target_warehouse": "Goods In Transit - GD",
         "vehicle": "DUMMY",
         "weight": 19.5,
     }
@@ -113,9 +114,9 @@ if __name__ == "__main__":
     # Procure crates
     for crate_id in crates:
         print(crate_id)
-        procure_crate(crate_id)
-    # transfer_out_crate(crate_id)
-    # transfer_in_crate(crate_id)
+        # procure_crate(crate_id)
+        # transfer_out_crate(crate_id)
+        transfer_in_crate(crate_id)
     # delete_crate(crate_id)
     # cycle_count_crate(crate_id)
     # identify_crate(crate_id)

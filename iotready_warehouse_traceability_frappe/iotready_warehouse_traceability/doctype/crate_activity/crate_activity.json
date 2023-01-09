@@ -90,20 +90,18 @@
   },
   {
    "fieldname": "source_warehouse",
-   "fieldtype": "Link",
+   "fieldtype": "Data",
    "in_list_view": 1,
    "in_preview": 1,
    "in_standard_filter": 1,
    "label": "Source Warehouse",
-   "options": "Warehouse",
    "read_only": 1,
    "reqd": 1
   },
   {
    "fieldname": "target_warehouse",
-   "fieldtype": "Link",
+   "fieldtype": "Data",
    "label": "Target Warehouse",
-   "options": "Warehouse",
    "read_only": 1
   },
   {
@@ -134,12 +132,11 @@
   },
   {
    "fieldname": "item_code",
-   "fieldtype": "Link",
+   "fieldtype": "Data",
    "in_list_view": 1,
    "in_preview": 1,
    "in_standard_filter": 1,
    "label": "Item Code",
-   "options": "Item",
    "read_only": 1
   },
   {
@@ -155,12 +152,11 @@
   },
   {
    "fieldname": "supplier_id",
-   "fieldtype": "Link",
+   "fieldtype": "Data",
    "in_list_view": 1,
    "in_preview": 1,
    "in_standard_filter": 1,
    "label": "Supplier ID",
-   "options": "Supplier",
    "read_only": 1
   },
   {
@@ -180,11 +176,10 @@
   {
    "fetch_from": "item_code.stock_uom",
    "fieldname": "stock_uom",
-   "fieldtype": "Link",
+   "fieldtype": "Data",
    "in_preview": 1,
    "in_standard_filter": 1,
    "label": "Stock UOM",
-   "options": "UOM",
    "read_only": 1
   },
   {
@@ -216,7 +211,7 @@
  ],
  "hide_toolbar": 1,
  "links": [],
- "modified": "2022-12-05 18:32:36.010015",
+ "modified": "2023-01-09 18:31:13.633102",
  "modified_by": "Administrator",
  "module": "IoTReady Warehouse Traceability",
  "name": "Crate Activity",

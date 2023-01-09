@@ -1,40 +1,28 @@
 const submit_summary = (frm) => {
-  frappe.db
-    .get_value("WMS Settings", "WMS Settings", "enable_wms_integration")
-    .then((r) => {
-      const message =
-        `<p>WMS integration is currently: ${
-          Number(r.message.enable_wms_integration) === 1
-            ? "enabled"
-            : "disabled"
-        }</p>` +
-        `<br/>` +
-        `<p>Quantities will be submitted as displayed in the table below.</p>`;
-      frappe.warn(
-        "Please confirm details before submitting.",
-        message,
-        () => {
-          frm.clear_custom_buttons();
-          frm.call("submit_summary").then(
-            (r) => {
-              if (r.exc) {
-                console.error("error", r.exc);
-                frappe.throw(r.exc);
-                frm.refresh();
-              } else if (r.message) {
-                frappe.msgprint(r.message);
-                frm.refresh();
-              }
-            },
-            () => {
-              frm.refresh();
-            }
-          );
-          frappe.msgprint("Please wait...");
+  frappe.warn(
+    "Please confirm details before submitting.",
+    "",
+    () => {
+      frm.clear_custom_buttons();
+      frm.call("submit_summary").then(
+        (r) => {
+          if (r.exc) {
+            console.error("error", r.exc);
+            frappe.throw(r.exc);
+            frm.refresh();
+          } else if (r.message) {
+            frappe.msgprint(r.message);
+            frm.refresh();
+          }
         },
-        () => {}
+        () => {
+          frm.refresh();
+        }
       );
-    });
+      frappe.msgprint("Please wait...");
+    },
+    () => {}
+  );
 };
 
 const show_submit_button = (frm) => {
