@@ -98,16 +98,30 @@ class CrateActivitySummary(Document):
 
     @frappe.whitelist()
     def get_sku_table(self):
-        return utils.get_sku_table(items=json.loads(self.items), activity=self.activity)
+        hook = frappe.db.get_single_value(
+            "IoTReady Traceability Settings", "sku_table_hook"
+        )
+        if hook:
+            return frappe.get_attr(hook)(self)
+        else:
+            return utils.get_sku_table(
+                items=json.loads(self.items), activity=self.activity
+            )
 
     @frappe.whitelist()
     def get_crate_table(self):
         is_editable = self.status == "Draft"
-        return utils.get_crate_table(
-            crates=json.loads(self.crates),
-            activity=self.activity,
-            is_editable=is_editable,
+        hook = frappe.db.get_single_value(
+            "IoTReady Traceability Settings", "crate_table_hook"
         )
+        if hook:
+            return frappe.get_attr(hook)(self)
+        else:
+            return utils.get_crate_table(
+                crates=json.loads(self.crates),
+                activity=self.activity,
+                is_editable=is_editable,
+            )
 
     @frappe.whitelist()
     def delete_crate(self, crate_id):
