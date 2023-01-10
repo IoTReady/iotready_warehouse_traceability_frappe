@@ -37,6 +37,12 @@ class CrateActivitySummary(Document):
         crates = self.crates
         self.set_crates_completed(crates)
         self.status = "Completed"
+        prefix = self.activity.lower().replace(" ", "_")
+        hook = frappe.db.get_single_value(
+            "IoTReady Traceability Settings", f"{prefix}_submit_hook"
+        )
+        if hook:
+            frappe.get_attr(hook)(self)
         self.save()
         frappe.db.commit()
         return "Submitted"
