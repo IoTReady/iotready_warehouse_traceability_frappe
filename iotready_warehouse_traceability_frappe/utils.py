@@ -111,7 +111,7 @@ def crates_to_items(crates: dict):
         quantity = get_quantity_in_uom(row["grn_quantity"], row["stock_uom"])
         if sku not in items:
             items[sku] = {
-                "sku": sku,
+                "item_code": sku,
                 "qty": quantity,
                 "stock_uom": row["stock_uom"],
                 "item_name": row["item_name"],

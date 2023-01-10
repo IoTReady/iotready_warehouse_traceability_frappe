@@ -14,7 +14,7 @@
   {% for row in items %}
   <tr>
     <td>{{loop.index}}</td>
-    <td>{{row['sku']}}</td>
+    <td>{{row['item_code']}}</td>
     <td>{{row['item_name']}}</td>
     {% if row['stock_uom'] | lower in ["nos", "pcs"] %}
     <td style="text-align: right">{{row['qty'] | int }} Pcs</td>
