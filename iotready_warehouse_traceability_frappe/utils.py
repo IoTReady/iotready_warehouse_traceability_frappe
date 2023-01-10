@@ -3,9 +3,11 @@ import frappe
 from datetime import datetime, timedelta
 from iotready_warehouse_traceability_frappe.validations import *
 
-get_user_warehouse_hook = frappe.db.get_single_value(
-    "IoTReady Traceability Settings", "get_user_warehouse_hook"
-)
+
+def get_user_warehouse_hook():
+    return frappe.db.get_single_value(
+        "IoTReady Traceability Settings", "get_user_warehouse_hook"
+    )
 
 
 def normal_round(num, ndigits=0):
@@ -337,7 +339,7 @@ def procurement(crate: dict, activity: str):
     Dispatcher for Procurement called by api.record_events
     Validates crate and adds to Purchase Receipt
     """
-    source_warehouse = frappe.get_attr(get_user_warehouse_hook)()
+    source_warehouse = frappe.get_attr(get_user_warehouse_hook())()
     crate["crate_id"] = crate["crate_id"].strip()
     crate_id = crate["crate_id"]
     item_code = crate["item_code"]
@@ -365,7 +367,7 @@ def transfer_out(crate: dict, activity: str):
     """
     crate["crate_id"] = crate["crate_id"].strip()
     crate_id = crate["crate_id"]
-    source_warehouse = frappe.get_attr(get_user_warehouse_hook)()
+    source_warehouse = (frappe.get_attr(get_user_warehouse_hook()))()
     target_warehouse = crate["target_warehouse"]
     vehicle = crate["vehicle"]
     create_transfer_out_activity(
@@ -385,7 +387,7 @@ def transfer_in(crate: dict, activity: str):
     """
     crate["crate_id"] = crate["crate_id"].strip()
     crate_id = crate["crate_id"]
-    target_warehouse = frappe.get_attr(get_user_warehouse_hook)()
+    target_warehouse = frappe.get_attr(get_user_warehouse_hook())()
     create_transfer_in_activity(
         crate_id=crate_id,
         activity=activity,
@@ -407,7 +409,7 @@ def delete_crate(crate: dict, activity: str):
         crate = json.loads(crate)
     crate["crate_id"] = crate["crate_id"].strip()
     crate_id = crate["crate_id"]
-    source_warehouse = frappe.get_attr(get_user_warehouse_hook)()
+    source_warehouse = frappe.get_attr(get_user_warehouse_hook())()
     delete_draft_crate_activities(crate_id)
     create_delete_activity(
         crate_id=crate_id, activity=activity, source_warehouse=source_warehouse
@@ -426,7 +428,7 @@ def delete_crate(crate: dict, activity: str):
 #     crate_id = crate["crate_id"]
 #     validate_crate(crate_id)
 #     validate_crate_in_use(crate_id)
-#     source_warehouse = frappe.get_attr(get_user_warehouse_hook)()
+#     source_warehouse = frappe.get_attr(get_user_warehouse_hook())()
 #     validate_source_warehouse(crate_id, source_warehouse)
 #     doc = create_cycle_count_activity(
 #         crate_id=crate_id,
@@ -455,7 +457,7 @@ def delete_crate(crate: dict, activity: str):
 #     crate_id = crate["crate_id"]
 #     validate_crate(crate_id)
 #     validate_crate_in_use(crate_id)
-#     source_warehouse = frappe.get_attr(get_user_warehouse_hook)()
+#     source_warehouse = frappe.get_attr(get_user_warehouse_hook())()
 #     validate_source_warehouse(crate_id, source_warehouse)
 #     create_cycle_count_activity(
 #         crate_id=crate_id,
@@ -475,7 +477,7 @@ def delete_crate(crate: dict, activity: str):
 #     validate_crate(parent_crate_id)
 #     validate_crate_in_use(parent_crate_id)
 #     validate_crate_not_in_use(child_crate_id)
-#     source_warehouse = frappe.get_attr(get_user_warehouse_hook)()
+#     source_warehouse = frappe.get_attr(get_user_warehouse_hook())()
 #     validate_source_warehouse(parent_crate_id, source_warehouse)
 #     maybe_create_crate(child_crate_id)
 #     set_crate_availability(child_crate_id, is_available_for_procurement=False)
