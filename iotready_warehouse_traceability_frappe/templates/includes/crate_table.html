@@ -2,6 +2,7 @@
   <tr>
     <th>No.</th>
     <th>Crate ID</th>
+    <th>Added By</th>
     <th>SKU</th>
     <th>Description</th>
     <th style="text-align: right">GRN Quantity</th>
@@ -16,6 +17,11 @@
   <tr>
     <td>{{loop.index}}</td>
     <td>{{row['crate_id']}}</td>
+    <td>
+      <p style="font-size: 0.7rem; word-wrap: break-word; width: 150px">{{row['owner']}} at {{row['creation']}} via
+        {{row['capture_mode']}}
+      </p>
+    </td>
     <td>{{row['item_code']}}</td>
     <td>{{row['item_name']}}</td>
     {% if row['stock_uom'] | lower in ["nos", "pcs"] %}
