@@ -103,10 +103,11 @@ def activity_crates(
             "capture_mode",
         ],
     )
-    if distinct:
-        crates = {row["crate_id"]: row for row in crates}
-        return list(crates.values())
-    return crates
+    response = {}
+    for row in crates:
+        row["creation"] = row["creation"].strftime("%T %d-%m-%y")
+        response[row["crate_id"]] = row
+    return list(response.values())
 
 
 def crates_to_items(crates: dict):
