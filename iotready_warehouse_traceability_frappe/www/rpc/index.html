@@ -42,21 +42,10 @@
         }
         console.log(cmd, data);
         frappe.call({
-            method: cmd,
+            method: "iotready_warehouse_traceability_frappe.rpc.run",
             type: "POST",
-            args: data,
+            args: { data: data, command: cmd },
             btn: $('.btn-primary'),
-            // callback: (r) => {
-            //     console.log(r);
-            //     $("#result").text(JSON.stringify(r));
-            //     if (r.exc) {
-            //         frappe.throw(r.exc);
-            //     }
-            // },
-            // error: (r) => {
-            //     console.error(e);
-            //     $("#result").text(JSON.stringify(r));
-            // },
             freeze: true,
             freeze_message: "Please wait...",
             async: true,
