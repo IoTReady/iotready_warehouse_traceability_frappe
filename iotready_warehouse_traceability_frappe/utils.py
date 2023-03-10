@@ -575,6 +575,7 @@ def record_events(crate, activity):
         log.activity = activity
         log.crate = json.dumps(crate)
         log.result = json.dumps(result)
+        log.raw_payload = json.dumps({"crate": crate, "activity": activity})
         log.save()
     except Exception as e:
         print(str(e))
