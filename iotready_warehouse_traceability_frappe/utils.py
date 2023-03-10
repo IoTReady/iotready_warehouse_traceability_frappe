@@ -559,7 +559,7 @@ def record_events(crate, activity):
         )
         hook_result = None
         if hook:
-            hook_result = frappe.get_attr(hook)(crate, activity)
+            crate, hook_result = frappe.get_attr(hook)(crate, activity)
         result = allowed_activities[activity](crate, activity)
         if hook_result:
             result.update(hook_result)
