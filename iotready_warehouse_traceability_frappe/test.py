@@ -1,6 +1,6 @@
 import json
 import requests
-from joblib import Parallel, delayed
+# from joblib import Parallel, delayed
 
 usr = "cc@iotready.co"
 pwd = "iotready"
@@ -48,16 +48,17 @@ def record_events(crate: dict, activity: str):
 
 
 def procure_crate(crate_id):
-    print(crate_id)
+    # print(crate_id)
     crate = {
         "crate_id": crate_id,
         "item_code": "Imli Pop 1",
         "stock_uom": "PCS",
         "quantity": 20,
-        "weight": 10,
+        "weight": 20.5,
         "isFinal": True,
         "supplier": "SIRA 1",
     }
+    print(json.dumps(crate))
     record_events(crate, "Procurement")
 
 
@@ -108,16 +109,16 @@ def split_crate(crate_id):
 
 if __name__ == "__main__":
     login()
-    get_configuration()
+    # get_configuration()
     crates = generate_crates(count=1)
     # print(crates)
     # Procure crates
     for crate_id in crates:
         print(crate_id)
-        # procure_crate(crate_id)
+        procure_crate(crate_id)
         # transfer_out_crate(crate_id)
         # transfer_in_crate(crate_id)
-        delete_crate(crate_id)
+        # delete_crate(crate_id)
     # cycle_count_crate(crate_id)
     # identify_crate(crate_id)
     # split_crate(crate_id)

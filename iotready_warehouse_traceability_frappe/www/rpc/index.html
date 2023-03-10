@@ -1,0 +1,71 @@
+{% extends "templates/web.html" %}
+{% set title = page_title or _("Remote Procedure Calls") %}
+
+{% block page_content %}
+
+
+<article class="">
+    <section class="section section-padding-bottom">
+        <h2>Remote Procedure Calls</h2>
+        <form>
+            <div class="form-group">
+                <label for="cmd">Command</label>
+                <input type="text" class="form-control" id="cmd" aria-describedby="Command" value="frappe.ping">
+                <small id="cmdHelp" class="form-text text-muted">Enter the dotted path to a whitelisted
+                    function.</small>
+            </div>
+            <div class="form-group">
+                <label for="json">JSON</label>
+                <textarea type="text" class="form-control" id="json" rows="5" spellcheck="false"></textarea>
+            </div>
+            <div>
+                <p>Result:</p>
+                <p id="result"></p>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </section>
+</article>
+
+<script>
+    const element = document.querySelector('form');
+    element.addEventListener('submit', event => {
+        event.preventDefault();
+        const cmd = $("#cmd").val();
+        let data = $("#json").val();
+        if (data) {
+            try {
+                data = JSON.parse(data);
+            } catch (e) {
+                $("#result").text(e);
+            }
+        }
+        console.log(cmd, data);
+        frappe.call({
+            method: cmd,
+            type: "POST",
+            args: data,
+            btn: $('.btn-primary'),
+            // callback: (r) => {
+            //     console.log(r);
+            //     $("#result").text(JSON.stringify(r));
+            //     if (r.exc) {
+            //         frappe.throw(r.exc);
+            //     }
+            // },
+            // error: (r) => {
+            //     console.error(e);
+            //     $("#result").text(JSON.stringify(r));
+            // },
+            freeze: true,
+            freeze_message: "Please wait...",
+            async: true,
+        }).then(r => {
+            $("#result").text(JSON.stringify(r));
+        }).catch(e => {
+            $("#result").text(JSON.stringify(e));
+        })
+    });
+</script>
+
+{% endblock %}
