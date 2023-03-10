@@ -98,6 +98,9 @@ def activity_crates(
             "target_warehouse",
             "vehicle",
             "status",
+            "creation",
+            "owner",
+            "capture_mode",
         ],
     )
     if distinct:
