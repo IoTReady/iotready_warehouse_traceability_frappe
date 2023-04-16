@@ -424,36 +424,33 @@ def delete_crate(crate: dict, activity: str):
     }
 
 
-# def cycle_count(crate: dict, activity: str):
-#     """
-#     Updates and tracks crate weight and moisture loss.
-#     """
-#     crate["crate_id"] = crate["crate_id"].strip()
-#     crate_id = crate["crate_id"]
-#     validate_crate(crate_id)
-#     validate_crate_in_use(crate_id)
-#     source_warehouse = frappe.get_attr(get_user_warehouse_hook())()
-#     validate_source_warehouse(crate_id, source_warehouse)
-#     doc = create_cycle_count_activity(
-#         crate_id=crate_id,
-#         activity=activity,
-#         source_warehouse=source_warehouse,
-#         crate=crate,
-#     )
-#     if doc.actual_loss and doc.actual_loss > 0:
-#         raise Exception(
-#             f"Actual loss of {normal_round(doc.actual_loss,2)} kg and moisture loss of {normal_round(doc.moisture_loss,2)} kg recorded."
-#         )
-#     elif doc.moisture_loss and doc.moisture_loss > 0:
-#         raise Exception(
-#             f"Moisture loss of {normal_round(doc.moisture_loss,2)} kg recorded."
-#         )
-#     elif doc.excess_weight and doc.excess_weight > 0:
-#         raise Exception(f"Weight increased by {normal_round(doc.excess_weight,2)} kg.")
-#     return {
-#         "success": True,
-#         "message": "No change in weight.",
-#     }
+def cycle_count(crate: dict, activity: str):
+    """
+    Updates and tracks crate weight and moisture loss.
+    """
+    crate["crate_id"] = crate["crate_id"].strip()
+    crate_id = crate["crate_id"]
+    source_warehouse = frappe.get_attr(get_user_warehouse_hook())()
+    doc = create_cycle_count_activity(
+        crate_id=crate_id,
+        activity=activity,
+        source_warehouse=source_warehouse,
+        crate=crate,
+    )
+    if doc.actual_loss and doc.actual_loss > 0:
+        raise Exception(
+            f"Actual loss of {normal_round(doc.actual_loss,2)} kg and moisture loss of {normal_round(doc.moisture_loss,2)} kg recorded."
+        )
+    elif doc.moisture_loss and doc.moisture_loss > 0:
+        raise Exception(
+            f"Moisture loss of {normal_round(doc.moisture_loss,2)} kg recorded."
+        )
+    elif doc.excess_weight and doc.excess_weight > 0:
+        raise Exception(f"Weight increased by {normal_round(doc.excess_weight,2)} kg.")
+    return {
+        "success": True,
+        "message": "No change in weight.",
+    }
 
 
 # def identify(crate: dict, activity: str):
@@ -548,7 +545,7 @@ allowed_activities = {
     "Transfer Out": transfer_out,
     "Transfer In": transfer_in,
     "Delete": delete_crate,
-    # "Cycle Count": cycle_count,
+    "Cycle Count": cycle_count,
     # "Identify": identify,
     # "Crate Splitting": crate_splitting,
 }

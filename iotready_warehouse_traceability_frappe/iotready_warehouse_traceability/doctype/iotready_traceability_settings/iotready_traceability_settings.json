@@ -12,6 +12,7 @@
   "transfer_out_event_hook",
   "transfer_in_event_hook",
   "delete_event_hook",
+  "cycle_count_event_hook",
   "column_break_3",
   "procurement_submit_hook",
   "transfer_out_submit_hook",
@@ -120,12 +121,17 @@
    "fieldname": "delete_event_hook",
    "fieldtype": "Data",
    "label": "Delete Event Hook"
+  },
+  {
+   "fieldname": "cycle_count_event_hook",
+   "fieldtype": "Data",
+   "label": "Cycle Count Event Hook"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-01-09 19:14:41.389995",
+ "modified": "2023-04-16 16:32:40.811357",
  "modified_by": "Administrator",
  "module": "IoTReady Warehouse Traceability",
  "name": "IoTReady Traceability Settings",
