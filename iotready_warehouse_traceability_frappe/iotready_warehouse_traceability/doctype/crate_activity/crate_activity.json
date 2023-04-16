@@ -23,6 +23,10 @@
   "wms_acknowledgement_id",
   "reference_id",
   "column_break_11",
+  "procured_crate_weight",
+  "procured_grn_quantity",
+  "procurement_warehouse",
+  "procurement_warehouse_name",
   "stock_uom",
   "grn_quantity",
   "crate_weight",
@@ -207,11 +211,37 @@
    "in_standard_filter": 1,
    "label": "WMS Acknowledgement ID",
    "read_only": 1
+  },
+  {
+   "fieldname": "procured_crate_weight",
+   "fieldtype": "Float",
+   "label": "Procured Crate Weight",
+   "read_only": 1
+  },
+  {
+   "fieldname": "procurement_warehouse",
+   "fieldtype": "Link",
+   "label": "Procurement Warehouse",
+   "options": "Warehouse",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "procurement_warehouse.warehouse_name",
+   "fieldname": "procurement_warehouse_name",
+   "fieldtype": "Data",
+   "label": "Procurement Warehouse Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "procured_grn_quantity",
+   "fieldtype": "Float",
+   "label": "Procured GRN Quantity",
+   "read_only": 1
   }
  ],
  "hide_toolbar": 1,
  "links": [],
- "modified": "2023-01-09 18:31:13.633102",
+ "modified": "2023-04-16 18:53:14.268893",
  "modified_by": "Administrator",
  "module": "IoTReady Warehouse Traceability",
  "name": "Crate Activity",

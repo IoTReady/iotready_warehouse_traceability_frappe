@@ -17,6 +17,9 @@ frappe.ui.form.on("Crate", {
   refresh: function (frm) {
     frm.add_custom_button("Generate QRCode Image", () => {
       generate_qrcode_image(frm);
+      if (frappe.user_roles.includes("System Manager")) {
+        frm.toggle_enable(['is_available_for_procurement', 'available_at'], 1);
+      }
     });
   },
 });

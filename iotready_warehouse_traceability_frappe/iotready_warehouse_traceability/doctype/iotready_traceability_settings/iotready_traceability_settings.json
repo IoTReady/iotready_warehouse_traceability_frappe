@@ -13,6 +13,7 @@
   "transfer_in_event_hook",
   "delete_event_hook",
   "cycle_count_event_hook",
+  "release_event_hook",
   "column_break_3",
   "procurement_submit_hook",
   "transfer_out_submit_hook",
@@ -25,7 +26,10 @@
   "sku_table_hook",
   "section_break_7",
   "time_before_crate_release",
-  "enable_cycle_count"
+  "column_break_0ecvw",
+  "enable_cycle_count",
+  "enable_cycle_count_for_pieces",
+  "enable_moisture_loss_calculation"
  ],
  "fields": [
   {
@@ -126,12 +130,34 @@
    "fieldname": "cycle_count_event_hook",
    "fieldtype": "Data",
    "label": "Cycle Count Event Hook"
+  },
+  {
+   "fieldname": "release_event_hook",
+   "fieldtype": "Data",
+   "label": "Release Event Hook"
+  },
+  {
+   "fieldname": "column_break_0ecvw",
+   "fieldtype": "Column Break",
+   "label": "Cycle Count"
+  },
+  {
+   "default": "0",
+   "fieldname": "enable_cycle_count_for_pieces",
+   "fieldtype": "Check",
+   "label": "Enable Cycle Count For Pieces"
+  },
+  {
+   "default": "0",
+   "fieldname": "enable_moisture_loss_calculation",
+   "fieldtype": "Check",
+   "label": "Enable Moisture Loss Calculation"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-04-16 16:32:40.811357",
+ "modified": "2023-04-16 18:43:32.545055",
  "modified_by": "Administrator",
  "module": "IoTReady Warehouse Traceability",
  "name": "IoTReady Traceability Settings",

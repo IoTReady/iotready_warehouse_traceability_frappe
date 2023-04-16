@@ -531,6 +531,33 @@ def cycle_count(crate: dict, activity: str):
 #     }
 
 
+def release(crate: dict, activity: str):
+    crate["crate_id"] = (
+        crate["crate_id"].strip().encode("ascii", errors="ignore").decode()
+    )
+    crate_id = crate["crate_id"]
+    release_crate(crate_id, delayed=False)
+    payload = {"success": True, "message": "Crate Released"}
+    return payload
+
+
+@frappe.whitelist()
+def release_crates(docnames: list):
+    if isinstance(docnames, str):
+        docnames = json.loads(docnames)
+    else:
+        frappe.throw("Invalid document list received")
+    uniques = set()
+    for docname in docnames:
+        try:
+            crate_id = frappe.get_value("Crate Activity", docname, "crate_id")
+            release_crate(crate_id, delayed=False)
+            uniques.add(crate_id)
+        except:
+            pass
+    frappe.msgprint(f"Successfully released {len(uniques)} crates.")
+
+
 def new_crate():
     crate = frappe.new_doc("Crate")
     crate.id = frappe.generate_hash()[-10:]
@@ -546,6 +573,7 @@ allowed_activities = {
     "Transfer In": transfer_in,
     "Delete": delete_crate,
     "Cycle Count": cycle_count,
+    "Release": release,
     # "Identify": identify,
     # "Crate Splitting": crate_splitting,
 }
@@ -553,6 +581,7 @@ allowed_activities = {
 
 def record_events(crate, activity):
     try:
+        assert crate and activity, "Invalid crate or activity"
         validate_mandatory_fields(crate, activity)
         prefix = activity.lower().replace(" ", "_")
         hook = frappe.db.get_single_value(
@@ -565,6 +594,7 @@ def record_events(crate, activity):
         if hook_result:
             result.update(hook_result)
     except Exception as e:
+        print("Exception in record_events: ", str(e))
         result = {"success": False, "message": str(e)}
     try:
         print(crate, activity)

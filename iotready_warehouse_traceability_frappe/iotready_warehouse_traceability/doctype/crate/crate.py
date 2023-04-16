@@ -72,11 +72,11 @@ class Crate(Document):
         )
 
     @property
-    def procured_grn_quantity(self):
+    def procured_crate_weight(self):
         if not self.last_procurement:
             return None
         return frappe.db.get_value(
-            "Crate Activity", self.last_procurement, "grn_quantity"
+            "Crate Activity", self.last_procurement, "crate_weight"
         )
 
     @property
@@ -150,4 +150,12 @@ class Crate(Document):
             return None
         return frappe.db.get_value(
             "Crate Activity", self.last_procurement, "source_warehouse"
+        )
+
+    @property
+    def procurement_warehouse_name(self):
+        if not self.procurement_warehouse_id:
+            return None
+        return frappe.db.get_value(
+            "Warehouse", self.procurement_warehouse_id, "warehouse_name"
         )
