@@ -33,9 +33,10 @@ class CrateActivity(Document):
             "activity": self.activity,
             "status": "Draft",
             "vehicle": self.vehicle or ["is", "not set"],
-            "supplier_id": self.supplier_id or ["is", "not set"],
             "creation": [">=", datetime.now().date()],
         }
+        if self.activity == "Procurement":
+            filters["supplier_id"] = self.supplier_id or ["is", "not set"]
         existing = frappe.get_all(
             "Crate Activity Summary",
             filters=filters,

@@ -239,9 +239,8 @@
    "read_only": 1
   }
  ],
- "hide_toolbar": 1,
  "links": [],
- "modified": "2023-04-16 18:53:14.268893",
+ "modified": "2023-05-29 12:45:00.805390",
  "modified_by": "Administrator",
  "module": "IoTReady Warehouse Traceability",
  "name": "Crate Activity",
@@ -302,5 +301,6 @@
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
- "title_field": "crate_id"
+ "title_field": "crate_id",
+ "track_changes": 1
 }
