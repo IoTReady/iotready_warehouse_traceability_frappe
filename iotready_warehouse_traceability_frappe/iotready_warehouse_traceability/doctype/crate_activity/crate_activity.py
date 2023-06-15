@@ -62,8 +62,6 @@ class CrateActivity(Document):
             self.supplier_name = crate_doc.supplier_name
 
     def maybe_create_activity_summary(self):
-        if self.activity in ["Picking", "Packing"]:
-            return
         if not self.activity in ["Procurement", "Transfer Out", "Transfer In"]:
             return
         filters = {
@@ -96,6 +94,8 @@ class CrateActivity(Document):
             # print("using existing reference_id", self.reference_id)
 
     def maybe_update_quantities(self):
+        if self.activity in ["Picking", "Packing"]:
+            return
         if self.activity in [
             "Procurement",
             "Crate Splitting",
