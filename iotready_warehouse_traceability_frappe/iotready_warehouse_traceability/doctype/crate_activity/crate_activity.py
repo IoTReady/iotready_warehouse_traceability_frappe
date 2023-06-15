@@ -62,6 +62,8 @@ class CrateActivity(Document):
             self.supplier_name = crate_doc.supplier_name
 
     def maybe_create_activity_summary(self):
+        if self.activity in ["Picking", "Packing"]:
+            return
         if not self.activity in ["Procurement", "Transfer Out", "Transfer In"]:
             return
         filters = {
@@ -211,7 +213,6 @@ class CrateActivity(Document):
 
     def maybe_update_picklist(self, on_trash=False):
         if self.picklist_id:
-            print(self.as_dict())
             picklist_doc = frappe.get_doc("Pick List", self.picklist_id)
             picklist_doc.status = "Open"
             completed = True
@@ -220,9 +221,13 @@ class CrateActivity(Document):
                 if row.item_code == self.item_code:
                     found = True
                     if on_trash:
-                        row.picked_qty -= self.grn_quantity
+                        row.picked_qty -= self.picked_quantity
                     else:
-                        row.picked_qty += self.grn_quantity
+                        if self.picked_quantity > row.qty - row.picked_qty:
+                            frappe.throw(
+                                "Picked quantity cannot be more than required quantity"
+                            )
+                        row.picked_qty += self.picked_quantity
                 if row.qty > row.picked_qty:
                     completed = False
             if completed:
