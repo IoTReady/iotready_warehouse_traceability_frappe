@@ -21,6 +21,7 @@
   "vehicle",
   "material_request",
   "picklist_id",
+  "package_id",
   "wms_acknowledgement_id",
   "reference_id",
   "column_break_11",
@@ -258,10 +259,16 @@
    "fieldtype": "Float",
    "label": "Picked Weight",
    "read_only": 1
+  },
+  {
+   "fieldname": "package_id",
+   "fieldtype": "Data",
+   "label": "Package ID",
+   "read_only": 1
   }
  ],
  "links": [],
- "modified": "2023-06-15 19:41:11.563200",
+ "modified": "2023-06-15 20:36:56.019478",
  "modified_by": "Administrator",
  "module": "IoTReady Warehouse Traceability",
  "name": "Crate Activity",
