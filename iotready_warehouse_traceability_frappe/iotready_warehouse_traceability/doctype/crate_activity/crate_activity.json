@@ -242,11 +242,12 @@
   {
    "fieldname": "picklist_id",
    "fieldtype": "Data",
-   "label": "picklist_id"
+   "label": "Picklist ID",
+   "read_only": 1
   }
  ],
  "links": [],
- "modified": "2023-06-15 16:13:53.870342",
+ "modified": "2023-06-15 18:44:52.337469",
  "modified_by": "Administrator",
  "module": "IoTReady Warehouse Traceability",
  "name": "Crate Activity",
