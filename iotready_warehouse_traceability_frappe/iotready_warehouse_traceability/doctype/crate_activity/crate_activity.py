@@ -9,7 +9,13 @@ from datetime import datetime
 
 class CrateActivity(Document):
     def before_insert(self):
+        self.validate()
+        self.maybe_create_crate()
+        self.maybe_set_source_warehouse()
+        self.maybe_set_procurement_details()
         self.set_capture_mode()
+        self.update_crate_details()
+        self.maybe_update_picklist()
         self.maybe_update_quantities()
         self.maybe_create_activity_summary()
 
@@ -23,6 +29,37 @@ class CrateActivity(Document):
             self.capture_mode = "Weight"
         else:
             self.capture_mode = "Scan"
+
+    def validate(self):
+        if self.activity not in ["Procurement", "Crate Splitting"]:
+            if not frappe.db.exists("Crate", self.crate_id):
+                frappe.throw("Crate {0} does not exist.".format(self.crate_id))
+
+    def maybe_create_crate(self):
+        if not frappe.db.exists("Crate", self.crate_id):
+            crate = frappe.new_doc("Crate")
+            crate.id = self.crate_id
+            crate.save()
+
+    def maybe_set_source_warehouse(self):
+        if not self.source_warehouse:
+            self.source_warehouse = frappe.get_attr(utils.get_user_warehouse_hook())()
+
+    def maybe_set_procurement_details(self):
+        if self.activity in ["Procurement", "Crate Splitting"]:
+            self.procurement_warehouse = self.source_warehouse
+            self.procurement_warehouse_name = frappe.get_value(
+                "Warehouse", self.source_warehouse, "title"
+            )
+            self.procurement_timestamp = datetime.now()
+
+    def update_crate_details(self):
+        if self.activity not in ["Procurement", "Crate Splitting"]:
+            crate_doc = frappe.get_doc("Crate", self.crate_id)
+            self.item_code = crate_doc.item_code
+            self.item_name = crate_doc.item_name
+            self.supplier_id = crate_doc.supplier_id
+            self.supplier_name = crate_doc.supplier_name
 
     def maybe_create_activity_summary(self):
         if not self.activity in ["Procurement", "Transfer Out", "Transfer In"]:
@@ -171,3 +208,26 @@ class CrateActivity(Document):
         if not self.grn_quantity:
             self.grn_quantity = crate.last_known_grn_quantity
         return
+
+    def maybe_update_picklist(self, on_trash=False):
+        if self.picklist_id:
+            print(self.as_dict())
+            picklist_doc = frappe.get_doc("Pick List", self.picklist_id)
+            picklist_doc.status = "Open"
+            completed = True
+            found = False
+            for row in picklist_doc.locations:
+                if row.item_code == self.item_code:
+                    found = True
+                    if on_trash:
+                        row.picked_qty -= self.grn_quantity
+                    else:
+                        row.picked_qty += self.grn_quantity
+                if row.qty > row.picked_qty:
+                    completed = False
+            if completed:
+                picklist_doc.status = "Completed"
+            picklist_doc.save()
+            if not on_trash:
+                if not found:
+                    frappe.throw("Item not found in picklist")

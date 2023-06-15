@@ -20,6 +20,7 @@
   "target_warehouse",
   "vehicle",
   "material_request",
+  "picklist_id",
   "wms_acknowledgement_id",
   "reference_id",
   "column_break_11",
@@ -237,10 +238,15 @@
    "fieldtype": "Float",
    "label": "Procured GRN Quantity",
    "read_only": 1
+  },
+  {
+   "fieldname": "picklist_id",
+   "fieldtype": "Data",
+   "label": "picklist_id"
   }
  ],
  "links": [],
- "modified": "2023-05-29 12:45:00.805390",
+ "modified": "2023-06-15 16:13:53.870342",
  "modified_by": "Administrator",
  "module": "IoTReady Warehouse Traceability",
  "name": "Crate Activity",
