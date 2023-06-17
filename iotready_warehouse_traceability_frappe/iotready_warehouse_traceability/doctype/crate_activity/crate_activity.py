@@ -49,7 +49,7 @@ class CrateActivity(Document):
         if self.activity in ["Procurement", "Crate Splitting"]:
             self.procurement_warehouse = self.source_warehouse
             self.procurement_warehouse_name = frappe.get_value(
-                "Warehouse", self.source_warehouse, "title"
+                "Warehouse", self.source_warehouse, "warehouse_name"
             )
             self.procurement_timestamp = datetime.now()
 
