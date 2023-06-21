@@ -42,8 +42,11 @@ class CrateActivity(Document):
             crate.save()
 
     def maybe_set_source_warehouse(self):
-        if not self.source_warehouse:
-            self.source_warehouse = frappe.get_attr(utils.get_user_warehouse_hook())()
+        if not self.activity in ["Transfer In"]:
+            if not self.source_warehouse:
+                self.source_warehouse = frappe.get_attr(
+                    utils.get_user_warehouse_hook()
+                )()
 
     def maybe_set_procurement_details(self):
         if self.activity in ["Procurement", "Crate Splitting"]:
