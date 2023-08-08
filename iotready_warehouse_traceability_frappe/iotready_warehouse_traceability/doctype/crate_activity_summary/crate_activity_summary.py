@@ -30,6 +30,15 @@ class CrateActivitySummary(Document):
         return json.dumps(utils.crates_to_items(crates))
 
     @frappe.whitelist()
+    def enqueue_submit_summary(self):
+        frappe.enqueue(
+            self.submit_summary,
+            queue="long",
+            timeout=300,
+        )
+        return "This document will be submitted in the background. Please check again in about 5 minutes."
+
+    @frappe.whitelist()
     def submit_summary(self):
         # Create a copy because self.crates is evaluated again as soon as GRN is done.
         # We use this copy to update the GRN in set_crates_grn

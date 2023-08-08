@@ -4,7 +4,7 @@ const submit_summary = (frm) => {
     "",
     () => {
       frm.clear_custom_buttons();
-      frm.call("submit_summary").then(
+      frm.call("enqueue_submit_summary").then(
         (r) => {
           if (r.exc) {
             console.error("error", r.exc);
