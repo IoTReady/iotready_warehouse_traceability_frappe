@@ -51,7 +51,10 @@ class CrateActivitySummary(Document):
             "IoTReady Traceability Settings", f"{prefix}_submit_hook"
         )
         if hook:
-            frappe.get_attr(hook)(self)
+            try:
+                frappe.get_attr(hook)(self)
+            except Exception as e:
+                self.error_message = str(e)
         self.save()
         frappe.db.commit()
         return "Submitted"
