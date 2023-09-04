@@ -18,6 +18,7 @@
   "supplier_name",
   "date",
   "status",
+  "error_message",
   "column_break_6",
   "number_of_crates",
   "reference_id",
@@ -201,11 +202,16 @@
    "hidden": 1,
    "is_virtual": 1,
    "label": "Crates"
+  },
+  {
+   "fieldname": "error_message",
+   "fieldtype": "Text",
+   "label": "Error Message"
   }
  ],
  "in_create": 1,
  "links": [],
- "modified": "2023-05-29 12:44:21.285914",
+ "modified": "2023-09-04 13:05:40.113211",
  "modified_by": "Administrator",
  "module": "IoTReady Warehouse Traceability",
  "name": "Crate Activity Summary",
