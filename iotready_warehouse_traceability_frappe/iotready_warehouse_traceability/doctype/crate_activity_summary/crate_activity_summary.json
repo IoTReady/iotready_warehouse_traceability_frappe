@@ -182,20 +182,92 @@
    "label": "Crates"
   },
   {
-   "fieldname": "error_message",
-   "fieldtype": "Text",
-   "label": "Error Message"
+   "fieldname": "activity",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Activity",
+   "options": "Crate Activity Type",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "source_warehouse",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Source Warehouse",
+   "options": "Warehouse",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "source_warehouse_name",
+   "fieldtype": "Data",
+   "label": "Source Warehouse Name",
+   "read_only": 1
   }
  ],
  "in_create": 1,
  "links": [],
- "modified": "2023-09-04 13:05:40.113211",
+ "modified": "2023-09-04 13:37:12.887323",
  "modified_by": "Administrator",
  "module": "IoTReady Warehouse Traceability",
  "name": "Crate Activity Summary",
  "naming_rule": "Expression",
  "owner": "Administrator",
- "permissions": [],
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Procurement User",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Procurement Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Central Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
  "search_fields": "source_warehouse, target_warehouse",
  "show_preview_popup": 1,
  "sort_field": "modified",

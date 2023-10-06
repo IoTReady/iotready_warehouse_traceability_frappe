@@ -53,10 +53,11 @@ class CrateActivitySummary(Document):
         if hook:
             try:
                 frappe.get_attr(hook)(self)
+                self.save()
+                frappe.db.commit()
             except Exception as e:
                 self.error_message = str(e)
-        self.save()
-        frappe.db.commit()
+                return "Error!"
         return "Submitted"
 
     def before_insert(self):
