@@ -61,6 +61,9 @@ frappe.ui.form.on("Crate Activity Summary", {
           el2.html(r.message);
         }
       });
+      const el3 = $('*[data-fieldname="view_stock_entries"]');
+      const href = `<p class="mb-3"><b><a href='/app/stock-entry?custom_crate_activity_summary=["like"%2C"%25${frm.doc.name}%25"]'>View Stock Entries</a></b></p>`;
+      el3.html(href);
     }
   },
 });

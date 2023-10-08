@@ -44,8 +44,6 @@ class CrateActivitySummary(Document):
         # We use this copy to update the GRN in set_crates_grn
         self.maybe_submit_to_wms()
         crates = self.crates
-        self.set_crates_completed(crates)
-        self.status = "Completed"
         prefix = self.activity.lower().replace(" ", "_")
         hook = frappe.db.get_single_value(
             "IoTReady Traceability Settings", f"{prefix}_submit_hook"
@@ -53,10 +51,15 @@ class CrateActivitySummary(Document):
         if hook:
             try:
                 frappe.get_attr(hook)(self)
+                self.set_crates_completed(crates)
+                self.status = "Completed"
+                self.error_message = ""
                 self.save()
                 frappe.db.commit()
             except Exception as e:
                 self.error_message = str(e)
+                self.save()
+                frappe.db.commit()
                 return "Error!"
         return "Submitted"
 
