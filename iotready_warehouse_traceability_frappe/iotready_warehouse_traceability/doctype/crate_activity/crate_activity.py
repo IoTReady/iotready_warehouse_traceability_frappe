@@ -63,6 +63,13 @@ class CrateActivity(Document):
             self.item_name = crate_doc.item_name
             self.supplier_id = crate_doc.supplier_id
             self.supplier_name = crate_doc.supplier_name
+            self.procurement_warehouse = crate_doc.procurement_warehouse_id
+            self.procurement_warehouse_name = crate_doc.procurement_warehouse_name
+            self.procurement_timestamp = crate_doc.procurement_timestamp
+            self.procured_grn_quantity = crate_doc.procured_grn_quantity
+            self.procured_crate_weight = crate_doc.procured_crate_weight
+            self.last_known_grn_quantity = crate_doc.last_known_grn_quantity
+            self.last_known_crate_weight = crate_doc.last_known_weight
 
     def maybe_create_activity_summary(self):
         if not self.activity in ["Procurement", "Transfer Out", "Transfer In"]:
