@@ -9,6 +9,7 @@
   "crate_id",
   "capture_mode",
   "status",
+  "session_id",
   "column_break_2",
   "activity",
   "source_warehouse",
@@ -24,12 +25,16 @@
   "package_id",
   "wms_acknowledgement_id",
   "reference_id",
+  "linked_reference_id",
   "column_break_11",
   "procured_crate_weight",
   "procured_grn_quantity",
   "procurement_warehouse",
   "procurement_warehouse_name",
+  "procurement_timestamp",
   "stock_uom",
+  "last_known_grn_quantity",
+  "last_known_crate_weight",
   "grn_quantity",
   "crate_weight",
   "picked_quantity",
@@ -52,7 +57,8 @@
    "label": "Activity",
    "options": "Crate Activity Type",
    "read_only": 1,
-   "reqd": 1
+   "reqd": 1,
+   "search_index": 1
   },
   {
    "fieldname": "section_break_4",
@@ -104,25 +110,29 @@
    "in_standard_filter": 1,
    "label": "Source Warehouse",
    "read_only": 1,
-   "reqd": 1
+   "reqd": 1,
+   "search_index": 1
   },
   {
    "fieldname": "target_warehouse",
    "fieldtype": "Data",
    "label": "Target Warehouse",
-   "read_only": 1
+   "read_only": 1,
+   "search_index": 1
   },
   {
    "fieldname": "vehicle",
    "fieldtype": "Data",
    "label": "Vehicle",
-   "read_only": 1
+   "read_only": 1,
+   "search_index": 1
   },
   {
    "fieldname": "material_request",
    "fieldtype": "Data",
    "label": "Material Request",
-   "read_only": 1
+   "read_only": 1,
+   "search_index": 1
   },
   {
    "fetch_from": "item_code.item_name",
@@ -145,7 +155,8 @@
    "in_preview": 1,
    "in_standard_filter": 1,
    "label": "Item Code",
-   "read_only": 1
+   "read_only": 1,
+   "search_index": 1
   },
   {
    "fieldname": "crate_id",
@@ -156,7 +167,8 @@
    "label": "Crate ID",
    "options": "Crate",
    "read_only": 1,
-   "reqd": 1
+   "reqd": 1,
+   "search_index": 1
   },
   {
    "fieldname": "supplier_id",
@@ -165,7 +177,8 @@
    "in_preview": 1,
    "in_standard_filter": 1,
    "label": "Supplier ID",
-   "read_only": 1
+   "read_only": 1,
+   "search_index": 1
   },
   {
    "fieldname": "excess_weight",
@@ -179,7 +192,8 @@
    "label": "Capture Mode",
    "options": "Scan\nWeight",
    "read_only": 1,
-   "reqd": 1
+   "reqd": 1,
+   "search_index": 1
   },
   {
    "fetch_from": "item_code.stock_uom",
@@ -188,13 +202,15 @@
    "in_preview": 1,
    "in_standard_filter": 1,
    "label": "Stock UOM",
-   "read_only": 1
+   "read_only": 1,
+   "search_index": 1
   },
   {
    "fieldname": "reference_id",
    "fieldtype": "Data",
    "label": "Reference ID",
-   "read_only": 1
+   "read_only": 1,
+   "search_index": 1
   },
   {
    "fieldname": "status",
@@ -205,7 +221,8 @@
    "label": "Status",
    "options": "Draft\nCompleted",
    "read_only": 1,
-   "reqd": 1
+   "reqd": 1,
+   "search_index": 1
   },
   {
    "fieldname": "wms_acknowledgement_id",
@@ -214,7 +231,8 @@
    "in_preview": 1,
    "in_standard_filter": 1,
    "label": "WMS Acknowledgement ID",
-   "read_only": 1
+   "read_only": 1,
+   "search_index": 1
   },
   {
    "fieldname": "procured_crate_weight",
@@ -227,7 +245,8 @@
    "fieldtype": "Link",
    "label": "Procurement Warehouse",
    "options": "Warehouse",
-   "read_only": 1
+   "read_only": 1,
+   "search_index": 1
   },
   {
    "fetch_from": "procurement_warehouse.warehouse_name",
@@ -246,7 +265,8 @@
    "fieldname": "picklist_id",
    "fieldtype": "Data",
    "label": "Picklist ID",
-   "read_only": 1
+   "read_only": 1,
+   "search_index": 1
   },
   {
    "fieldname": "picked_quantity",
@@ -264,11 +284,45 @@
    "fieldname": "package_id",
    "fieldtype": "Data",
    "label": "Package ID",
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "session_id",
+   "fieldtype": "Data",
+   "label": "Session ID",
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "procurement_timestamp",
+   "fieldtype": "Datetime",
+   "label": "Procurement Timestamp",
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "last_known_grn_quantity",
+   "fieldtype": "Float",
+   "label": "Last Known GRN Quantity",
    "read_only": 1
+  },
+  {
+   "fieldname": "last_known_crate_weight",
+   "fieldtype": "Float",
+   "label": "Last Known Crate Weight",
+   "read_only": 1
+  },
+  {
+   "fieldname": "linked_reference_id",
+   "fieldtype": "Data",
+   "label": "Linked Reference ID",
+   "read_only": 1,
+   "search_index": 1
   }
  ],
  "links": [],
- "modified": "2023-06-16 14:28:22.177456",
+ "modified": "2023-11-02 13:15:45.150034",
  "modified_by": "Administrator",
  "module": "IoTReady Warehouse Traceability",
  "name": "Crate Activity",

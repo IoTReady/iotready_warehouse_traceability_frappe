@@ -33,6 +33,8 @@ def normal_round(num, ndigits=0):
 
 
 def get_quantity_in_uom(qty, uom):
+    if not uom:
+        return qty
     if uom.lower() == "gram":
         qty = normal_round(qty / 1000, 3)
     elif uom.lower() == "kg":
