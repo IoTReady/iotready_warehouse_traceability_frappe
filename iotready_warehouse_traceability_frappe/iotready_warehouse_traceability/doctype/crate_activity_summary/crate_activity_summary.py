@@ -48,19 +48,19 @@ class CrateActivitySummary(Document):
         hook = frappe.db.get_single_value(
             "IoTReady Traceability Settings", f"{prefix}_submit_hook"
         )
-        if hook:
-            try:
+        try:
+            if hook:
                 frappe.get_attr(hook)(self)
-                self.set_crates_completed(crates)
-                self.status = "Completed"
-                self.error_message = ""
-                self.save()
-                frappe.db.commit()
-            except Exception as e:
-                self.error_message = str(e)
-                self.save()
-                frappe.db.commit()
-                return "Error!"
+            self.set_crates_completed(crates)
+            self.status = "Completed"
+            self.error_message = ""
+            self.save()
+            frappe.db.commit()
+        except Exception as e:
+            self.error_message = str(e)
+            self.save()
+            frappe.db.commit()
+            return "Error!"
         return "Submitted"
 
     def before_insert(self):
