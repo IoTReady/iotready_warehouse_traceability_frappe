@@ -104,7 +104,7 @@ class CrateActivity(Document):
             # print("using existing reference_id", self.reference_id)
 
     def maybe_update_quantities(self):
-        if self.activity in ["Picking", "Packing"]:
+        if self.activity in ["Customer Picking","Picking", "Packing"]:
             return
         if self.activity in [
             "Procurement",
