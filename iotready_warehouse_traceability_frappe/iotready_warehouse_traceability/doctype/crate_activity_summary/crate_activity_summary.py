@@ -42,7 +42,7 @@ class CrateActivitySummary(Document):
     def submit_summary(self):
         # Create a copy because self.crates is evaluated again as soon as GRN is done.
         # We use this copy to update the GRN in set_crates_grn
-        self.maybe_submit_to_wms()
+        # self.maybe_submit_to_wms()
         crates = self.crates
         prefix = self.activity.lower().replace(" ", "_")
         hook = frappe.db.get_single_value(
@@ -52,11 +52,13 @@ class CrateActivitySummary(Document):
             if hook:
                 frappe.get_attr(hook)(self)
             self.set_crates_completed(crates)
+            self.reload()
             self.status = "Completed"
             self.error_message = ""
             self.save()
             frappe.db.commit()
         except Exception as e:
+            self.reload()
             self.error_message = str(e)
             self.save()
             frappe.db.commit()
