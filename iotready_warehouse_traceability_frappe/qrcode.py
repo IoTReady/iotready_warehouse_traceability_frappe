@@ -23,7 +23,7 @@ def qrcode_as_png(qr_content, doctype=None, docname=None, is_private=True):
         attachment.attached_to_name = docname
         attachment.attached_to_doctype = doctype
     attachment.save()
-    frappe.db.commit()
+    # frappe.db.commit()
     return attachment.file_url
 
 

@@ -189,7 +189,7 @@ def delete_draft_crate_activities(crate_id):
         if len(last) > 0:
             for ref in last:
                 frappe.delete_doc_if_exists("Crate Activity", ref["name"])
-            frappe.db.commit()
+            # frappe.db.commit()
             return f"Deleted {last[0]['activity']} for {crate_id}."
     except Exception as e:
         print(str(e))
@@ -256,7 +256,7 @@ def create_procurement_activity(
     doc.source_warehouse = source_warehouse
     doc.target_warehouse = source_warehouse
     doc.save()
-    frappe.db.commit()
+    # frappe.db.commit()
 
 
 def create_transfer_out_activity(
@@ -272,7 +272,7 @@ def create_transfer_out_activity(
     # These could be None
     doc = maybe_update_activity_fields(crate, doc)
     doc.save()
-    frappe.db.commit()
+    # frappe.db.commit()
 
 
 def create_transfer_in_activity(crate_id, activity, target_warehouse, crate):
@@ -285,7 +285,7 @@ def create_transfer_in_activity(crate_id, activity, target_warehouse, crate):
     doc = maybe_update_activity_fields(crate, doc)
     print("create_transfer_in_activity", doc.as_dict())
     doc.save()
-    frappe.db.commit()
+    # frappe.db.commit()
 
 
 def create_delete_activity(crate_id, activity, source_warehouse):
@@ -296,7 +296,7 @@ def create_delete_activity(crate_id, activity, source_warehouse):
     doc.reference_id = frappe.generate_hash()[-10:]
     doc.status = "Completed"
     doc.save()
-    frappe.db.commit()
+    # frappe.db.commit()
 
 
 def create_cycle_count_activity(crate_id, activity, source_warehouse, crate):
@@ -310,7 +310,7 @@ def create_cycle_count_activity(crate_id, activity, source_warehouse, crate):
     doc = maybe_update_activity_fields(crate, doc)
     doc.status = "Completed"
     doc.save()
-    frappe.db.commit()
+    # frappe.db.commit()
     return doc
 
 
@@ -334,7 +334,7 @@ def create_crate_splitting_activity(
     doc.source_warehouse = source_warehouse
     doc.status = "Completed"
     doc.save()
-    frappe.db.commit()
+    # frappe.db.commit()
 
 
 # TODO: Move to customer specific app via hook
@@ -573,7 +573,7 @@ def new_crate():
     crate.id = frappe.generate_hash()[-10:]
     crate.is_available_for_procurement = True
     crate.save()
-    frappe.db.commit()
+    # frappe.db.commit()
     return {"success": True, "message": crate.name}
 
 

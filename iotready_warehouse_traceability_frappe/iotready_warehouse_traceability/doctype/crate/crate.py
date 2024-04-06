@@ -15,7 +15,7 @@ class Crate(Document):
         self.qrcode = qrcode_as_png(self.id, self.doctype, self.name)
         if save:
             self.save()
-            frappe.db.commit()
+            # frappe.db.commit()
         return True
 
     @property

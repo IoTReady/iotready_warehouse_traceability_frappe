@@ -56,12 +56,12 @@ class CrateActivitySummary(Document):
             self.status = "Completed"
             self.error_message = ""
             self.save()
-            frappe.db.commit()
+            # frappe.db.commit()
         except Exception as e:
             self.reload()
             self.error_message = str(e)
             self.save()
-            frappe.db.commit()
+            # frappe.db.commit()
             return "Error!"
         return "Submitted"
 
