@@ -570,11 +570,12 @@ def release_crates(docnames: list):
 
 def new_crate():
     crate = frappe.new_doc("Crate")
-    crate.id = frappe.generate_hash()[-10:]
+    id = frappe.generate_hash()[-10:]
+    crate.id = id
     crate.is_available_for_procurement = True
     crate.save()
-    # frappe.db.commit()
-    return {"success": True, "message": crate.name}
+    frappe.db.commit()
+    return {"success": True, "message": id}
 
 
 allowed_activities = {
