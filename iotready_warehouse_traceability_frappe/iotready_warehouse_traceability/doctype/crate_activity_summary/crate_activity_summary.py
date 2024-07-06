@@ -8,6 +8,48 @@ from datetime import datetime
 from iotready_warehouse_traceability_frappe import utils
 
 
+@frappe.whitelist(allow_guest=False)
+def merge_duplicate_summaries(docnames):
+    if isinstance(docnames, str):
+        docnames = json.loads(docnames)
+    elif not isinstance(docnames, list):
+        frappe.throw("Invalid document list received")
+    docs = [frappe.get_doc("Crate Activity Summary", docname) for docname in docnames]
+    source_warehouses = {doc.source_warehouse for doc in docs if doc.source_warehouse}
+    target_warehouses = {doc.target_warehouse for doc in docs if doc.target_warehouse}
+    suppliers = {doc.supplier_id for doc in docs if doc.supplier_id}
+    dates = {doc.creation.date() for doc in docs}
+    statuses = {doc.status for doc in docs}
+    activities = {doc.activity for doc in docs}
+    if len(activities) > 1:
+        frappe.throw("Documents belong to more than 1 activity.")
+    if len(source_warehouses) > 1:
+        frappe.throw("Documents belong to more than 1 source warehouse.")
+    if len(target_warehouses) > 1:
+        frappe.throw("Documents belong to more than 1 target warehouse.")
+    if len(suppliers) > 1:
+        frappe.throw("Documents belong to more than 1 supplier.")
+    if len(dates) > 1:
+        frappe.throw("Documents belong to more than 1 date.")
+    if "Completed" in statuses:
+        frappe.throw("Documents cannot be merged once completed.")
+    primary = docs[0]
+    for doc in docs[1:]:
+        crates = json.loads(doc.crates)
+        for crate in crates:
+            frappe.db.set_value(
+                "Crate Activity", crate["name"], "reference_id", primary.reference_id
+            )
+        frappe.delete_doc(
+            "Crate Activity Summary",
+            doc.name,
+            delete_permanently=False,
+            ignore_on_trash=True,
+            for_reload=True,
+        )
+    frappe.db.commit()
+
+
 class CrateActivitySummary(Document):
     @property
     def number_of_crates(self):
