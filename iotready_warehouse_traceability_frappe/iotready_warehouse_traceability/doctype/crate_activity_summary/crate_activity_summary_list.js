@@ -4,7 +4,7 @@ frappe.listview_settings["Crate Activity Summary"] = {
     listview.page.add_actions_menu_item("Merge", () => {
       const docnames = cur_list.get_checked_items().map((item) => item.name);
       frappe.call({
-        method: "iotready_warehouse_traceability_frappe.iotready_warehouse_traceability_frappe.doctype.crate_activity_summary.crate_activity_summary.merge_duplicate_summaries",
+        method: "iotready_warehouse_traceability_frappe.iotready_warehouse_traceability.doctype.crate_activity_summary.crate_activity_summary.merge_duplicate_summaries",
         type: "POST",
         args: {
           docnames,
